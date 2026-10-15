@@ -1,0 +1,20 @@
+---
+// Nur die Original-Logodateien aus public/logo/ verwenden, nie nachbauen.
+interface Props {
+  variante: 'tinte' | 'papier' | 'auf-rot';
+  alt?: string;
+  class?: string;
+  lazy?: boolean;
+}
+const { variante, alt = 'ABSOLVO', class: klasse, lazy = false } = Astro.props;
+---
+
+<img
+  src={`/logo/absolvo-logo-${variante}.svg`}
+  alt={alt}
+  width="590"
+  height="110"
+  class={klasse}
+  loading={lazy ? 'lazy' : undefined}
+  decoding="async"
+/>

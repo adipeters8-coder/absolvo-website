@@ -1,0 +1,23 @@
+---
+// Abschnitt „Für wen ist ABSOLVO?“ mit Links auf die Schulform-Seiten
+import SectionLabel from './SectionLabel.astro';
+import SchoolCards from './SchoolCards.astro';
+
+interface Props {
+  nummer: string;
+  /** Pfad der aktuellen Schulform-Seite, deren Karte weggelassen wird */
+  ausser?: string;
+  variante?: 'papier' | 'papier-2';
+}
+const { nummer, ausser, variante = 'papier' } = Astro.props;
+---
+
+<section class={`abschnitt abschnitt--${variante}`} aria-labelledby="fuer-wen-titel">
+  <div class="container">
+    <div class="abschnitt__kopf">
+      <SectionLabel nummer={nummer} text="Für wen" />
+      <h2 id="fuer-wen-titel">Für wen ist ABSOLVO?</h2>
+    </div>
+    <SchoolCards ausser={ausser} />
+  </div>
+</section>

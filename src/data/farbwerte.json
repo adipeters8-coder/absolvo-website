@@ -1,0 +1,9 @@
+{
+  "_info": "Nur für die Farbkacheln im Preisrechner. Welche Farben es gibt, steht in preise.json. Unbekannte Farben bekommen eine neutrale Kachel.",
+  "Schwarz": "#1B1B1E",
+  "Navy": "#1F2A44",
+  "Grau meliert": "#9A9996",
+  "Weiß": "#FFFFFF",
+  "Bordeaux": "#6B1D2A",
+  "Flaschengrün": "#1E3D2E"
+}

@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Rotstift from '../components/Rotstift.astro';
+import site from '../data/site.json';
+---
+
+<Base title="Danke für eure Anfrage | ABSOLVO" description="Eure Anfrage ist da." noindex>
+  <PageHero label="Anfrage">
+    <Fragment slot="titel">
+      <span class="nowrap">Abgehakt.<Rotstift typ="haken" farbe="tinte" animiert /></span>
+    </Fragment>
+    <p class="lead">
+      Eure Anfrage ist da. Ich melde mich bei euch, meistens innerhalb von [24 Stunden]. In der Zwischenzeit: Folgt uns auf
+      <a href={site.instagram.url} rel="noopener">Instagram</a>.
+    </p>
+  </PageHero>
+</Base>

@@ -1,0 +1,54 @@
+---
+// Rotstift-Elemente (Briefing Abschnitt 4). Regel: max. eins pro Abschnitt.
+interface Props {
+  typ: 'unterstreichung' | 'kringel' | 'haken';
+  farbe?: 'rot' | 'tinte' | 'papier';
+  /** nur Haken: einmalige Zeichen-Animation beim Laden */
+  animiert?: boolean;
+}
+const { typ, farbe = 'rot', animiert = false } = Astro.props;
+const HAKEN = 'M3 34 C9 35 15 42 21 53 C30 32 46 14 71 3 C50 19 34 38 24 61 C19 51 12 42 3 34 Z';
+---
+
+{
+  typ === 'haken' ? (
+    <svg
+      class:list={['rotstift-haken', `rotstift--${farbe}`, { 'rotstift-haken--animiert': animiert }]}
+      viewBox="0 0 74 64"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d={HAKEN} />
+    </svg>
+  ) : (
+    <span class:list={['rotstift', `rotstift--${typ}`, `rotstift--${farbe}`]}>
+      <slot />
+      {typ === 'unterstreichung' && (
+        <svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path d="M3 8 C50 3 120 1 197 6" stroke-width="6" stroke-linecap="round" fill="none" pathLength="1" />
+        </svg>
+      )}
+      {typ === 'kringel' && (
+        <svg viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path
+            d="M 34 20 C 78 4 160 6 186 34 C 206 58 168 92 98 94 C 40 96 6 76 10 50 C 13 30 46 14 112 9"
+            stroke-width="3"
+            stroke-linecap="round"
+            fill="none"
+            vector-effect="non-scaling-stroke"
+            pathLength="1"
+          />
+          <path
+            d="M 26 28 C 64 8 156 10 190 40 C 200 70 150 98 90 97 C 34 95 2 70 9 44 C 15 24 58 12 126 13"
+            stroke-width="2"
+            stroke-linecap="round"
+            fill="none"
+            vector-effect="non-scaling-stroke"
+            pathLength="1"
+            opacity="0.85"
+          />
+        </svg>
+      )}
+    </span>
+  )
+}

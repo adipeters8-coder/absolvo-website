@@ -1,0 +1,11 @@
+---
+// Section-Label in JetBrains Mono, z. B. „01 · FÜR WEN“
+interface Props {
+  nummer?: string;
+  text: string;
+  id?: string;
+}
+const { nummer, text, id } = Astro.props;
+---
+
+<p class="label" id={id}>{nummer ? `${nummer} · ${text}` : text}</p>

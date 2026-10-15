@@ -1,0 +1,160 @@
+---
+import Logo from './Logo.astro';
+import site from '../data/site.json';
+
+const fuerWen = [
+  { href: '/abipullover/', text: 'Abipullover' },
+  { href: '/abschlusspullover-realschule/', text: 'Abschlusspullover Realschule' },
+  { href: '/abschlusspullover-berufskolleg/', text: 'Abschlusspullover Berufskolleg' },
+];
+const absolvo = [
+  { href: '/preis-berechnen/', text: 'Preis berechnen' },
+  { href: '/so-laeufts/', text: "So läuft's" },
+  { href: '/faq/', text: 'FAQ' },
+  { href: '/ueber-absolvo/', text: 'Über ABSOLVO' },
+];
+const mailHref = `mailto:${site.mail.adresse}`;
+---
+
+<footer class="fuss">
+  <div class="container">
+    <div class="fuss__raster">
+      <div class="fuss__marke">
+        <a href="/" class="fuss__logo"><Logo variante="papier" alt="ABSOLVO Startseite" lazy /></a>
+        <p>Abschlusspullover für jeden Abschluss.</p>
+      </div>
+
+      <nav class="fuss__spalte" aria-labelledby="fuss-fuer-wen">
+        <p class="fuss__titel" id="fuss-fuer-wen">Für wen</p>
+        <ul role="list">
+          {fuerWen.map((l) => <li><a href={l.href}>{l.text}</a></li>)}
+        </ul>
+      </nav>
+
+      <nav class="fuss__spalte" aria-labelledby="fuss-absolvo">
+        <p class="fuss__titel" id="fuss-absolvo">ABSOLVO</p>
+        <ul role="list">
+          {absolvo.map((l) => <li><a href={l.href}>{l.text}</a></li>)}
+        </ul>
+      </nav>
+
+      <div class="fuss__spalte">
+        <p class="fuss__titel">Kontakt</p>
+        <ul role="list">
+          <li><a href={site.instagram.url} rel="me noopener">Instagram {site.instagram.anzeige}</a></li>
+          <li>
+            {site.tiktok.url ? <a href={site.tiktok.url} rel="me noopener">TikTok {site.tiktok.anzeige}</a> : <span>TikTok {site.tiktok.anzeige}</span>}
+          </li>
+          <li><a href={mailHref}>Mail {site.mail.anzeige}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fuss__unten">
+      <ul role="list" class="fuss__recht">
+        <li><a href="/impressum/">Impressum</a></li>
+        <li><a href="/datenschutz/">Datenschutz</a></li>
+      </ul>
+      <p>Made in Düsseldorf.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .fuss {
+    --fokus: var(--papier);
+    padding-block: clamp(56px, 8vw, 96px) 32px;
+    background: var(--tinte);
+    color: var(--papier);
+    font-size: 1.0625rem;
+  }
+
+  .fuss__raster {
+    display: grid;
+    gap: 40px;
+  }
+
+  .fuss__marke {
+    display: grid;
+    gap: 16px;
+    align-content: start;
+  }
+
+  .fuss__marke p {
+    font-size: var(--fs-h3);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    max-width: 12em;
+  }
+
+  .fuss__logo {
+    display: block;
+    width: 180px;
+  }
+
+  .fuss__logo :global(img) {
+    width: 100%;
+  }
+
+  .fuss__titel {
+    margin-bottom: 12px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--rot-auf-tinte);
+  }
+
+  .fuss__spalte li + li {
+    margin-top: 6px;
+  }
+
+  .fuss a,
+  .fuss span {
+    color: var(--papier-gedimmt);
+    text-decoration: none;
+  }
+
+  .fuss a:hover {
+    color: var(--papier);
+    text-decoration: underline;
+  }
+
+  .fuss__unten {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 24px;
+    margin-top: clamp(48px, 7vw, 80px);
+    padding-top: 24px;
+    border-top: 1px solid var(--tinte-2);
+    color: var(--papier-gedimmt);
+  }
+
+  .fuss__recht {
+    display: flex;
+    gap: 24px;
+  }
+
+  @media (min-width: 768px) {
+    .fuss__raster {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .fuss__marke {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .fuss__raster {
+      grid-template-columns: 1.6fr repeat(3, minmax(0, 1fr));
+    }
+
+    .fuss__marke {
+      grid-column: auto;
+    }
+  }
+</style>

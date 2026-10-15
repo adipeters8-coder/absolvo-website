@@ -1,0 +1,324 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import Rotstift from '../components/Rotstift.astro';
+import SchoolCards from '../components/SchoolCards.astro';
+import StepList from '../components/StepList.astro';
+import FaqItem from '../components/FaqItem.astro';
+import CtaBand from '../components/CtaBand.astro';
+import faq from '../data/faq.json';
+import preise from '../data/preise.json';
+import site from '../data/site.json';
+import { mockups, galerie } from '../data/mockups';
+import { organisation, website } from '../lib/schema';
+import { shy } from '../lib/text';
+
+const insta = preise.codes.INSTA50;
+
+const schritte = [
+  { titel: 'Preis berechnen.', text: 'Menge, Farbe und Druck eingeben, Preis sofort sehen.' },
+  { titel: 'Design abstimmen.', text: 'Ihr schickt Motto oder Idee, ich mache es druckfertig.' },
+  { titel: 'Namen und Größen sammeln.', text: 'Über einen Link, jeder trägt sich selbst ein.' },
+  { titel: 'Druck und Lieferung.', text: 'Gedruckt in Deutschland, geliefert zu euch.' },
+];
+
+// „Jeder zahlt selbst“ nur zeigen, wenn der Sammellink mit Einzelzahlung umgesetzt ist
+const gruende = ['Fairer Preis', 'Ein Ansprechpartner', ...(site.einzelzahlung_umgesetzt ? ['Jeder zahlt selbst'] : [])];
+---
+
+<Base
+  title="Abschlusspullover für jeden Abschluss | ABSOLVO"
+  description="Abschlusspullover für Abi, Realschule und Berufskolleg. Mit Motto und allen Namen drauf, fairer Preis, gedruckt in Deutschland. Jetzt Preis berechnen."
+  jsonLd={[organisation(), website()]}
+>
+  <!-- Hero -->
+  <section class="abschnitt abschnitt--rot hero" aria-labelledby="hero-titel">
+    <div class="container hero__raster">
+      <div class="hero__kopf">
+        <SectionLabel text="Jahrgang 2027" />
+        <h1 id="hero-titel">
+          {shy('Abschlusspullover')} für jeden <span class="nowrap">Abschluss.<Rotstift typ="haken" farbe="tinte" animiert /></span>
+        </h1>
+      </div>
+      <div class="hero__text">
+        <p class="lead">
+          Abi, Realschule, Berufskolleg. Ihr bekommt euren Pulli mit Motto und allen Namen drauf, zu einem fairen Preis
+          und mit einem Ansprechpartner, der sich auch wirklich meldet.
+        </p>
+        <div class="btn-reihe">
+          <Button href="/preis-berechnen/" variante="auf-rot">Preis berechnen</Button>
+          <a class="pfeil-link hero__link" href="/so-laeufts/">So läuft's</a>
+        </div>
+        <p class="hero__code">
+          Mit dem Code <span class="hero__code-wert">INSTA50</span> spart ihr {insta.rabatt_eur} € ab {insta.ab_menge} Hoodies.
+        </p>
+      </div>
+      <div class="hero__bild">
+        <Picture
+          src={mockups.schwarzRuecken.bild}
+          alt={mockups.schwarzRuecken.alt}
+          formats={['avif', 'webp']}
+          widths={[320, 480, 640, 780]}
+          sizes="(min-width: 960px) 420px, (min-width: 600px) 60vw, 82vw"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 · Für wen -->
+  <section class="abschnitt abschnitt--papier" aria-labelledby="fuer-wen-titel">
+    <div class="container">
+      <div class="abschnitt__kopf">
+        <SectionLabel nummer="01" text="Für wen" />
+        <h2 id="fuer-wen-titel">Für <Rotstift typ="unterstreichung">wen</Rotstift> ist ABSOLVO?</h2>
+      </div>
+      <SchoolCards />
+    </div>
+  </section>
+
+  <!-- 02 · So läuft's -->
+  <section class="abschnitt abschnitt--tinte" aria-labelledby="ablauf-titel">
+    <div class="container">
+      <div class="abschnitt__kopf">
+        <SectionLabel nummer="02" text="So läuft's" />
+        <h2 id="ablauf-titel">{shy('So kommt ihr an euren Abschlusspullover')}</h2>
+      </div>
+      <StepList schritte={schritte} />
+      <div class="abschnitt__fuss">
+        <a class="pfeil-link" href="/so-laeufts/">Mehr zum Ablauf</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · Beispiele -->
+  <section class="abschnitt abschnitt--papier" aria-labelledby="beispiele-titel">
+    <div class="container">
+      <div class="abschnitt__kopf">
+        <SectionLabel nummer="03" text="Beispiele" />
+        <h2 id="beispiele-titel">
+          {shy('Abschlusspullover')}, die so aussehen wie <Rotstift typ="kringel">ihr</Rotstift>
+        </h2>
+      </div>
+      <ul role="list" class="galerie">
+        {
+          galerie.map((m) => (
+            <li class="galerie__kachel">
+              <Picture
+                src={m.bild}
+                alt={m.alt}
+                formats={['avif', 'webp']}
+                widths={[240, 360, 520]}
+                sizes="(min-width: 960px) 360px, 45vw"
+              />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 04 · Warum ABSOLVO -->
+  <section class="abschnitt abschnitt--papier-2" aria-labelledby="warum-titel">
+    <div class="container warum">
+      <div class="abschnitt__kopf">
+        <SectionLabel nummer="04" text="Warum ABSOLVO" />
+        <h2 id="warum-titel">Warum <Rotstift typ="unterstreichung">ABSOLVO</Rotstift>?</h2>
+      </div>
+      <div class="warum__raster">
+        <p class="warum__text">
+          Ich mache seit 2019 Abschlusspullover für Klassen und Jahrgänge. Mit ABSOLVO bekommt das jetzt einen Namen. Ich
+          halte die Abläufe schlank, lasse in Deutschland drucken und rede mit euch auf Augenhöhe. Ohne Doktorhut-Clipart.
+        </p>
+        <ul role="list" class="warum__karten">
+          {
+            gruende.map((g, i) => (
+              <li class="karte warum__karte">
+                <span class="label">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{g}</h3>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · FAQ -->
+  <section class="abschnitt abschnitt--papier" aria-labelledby="faq-titel">
+    <div class="container faq-kurz">
+      <div class="abschnitt__kopf">
+        <SectionLabel nummer="05" text="FAQ" />
+        <h2 id="faq-titel">Häufige Fragen</h2>
+      </div>
+      <div>
+        {faq.slice(0, 4).map((f) => <FaqItem frage={f.frage} antwort={f.antwort} />)}
+        <div class="abschnitt__fuss">
+          <a class="pfeil-link" href="/faq/">Alle Fragen zu Abschlusspullovern</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    padding-block: clamp(40px, 6vw, 88px) clamp(56px, 8vw, 112px);
+    overflow: hidden;
+  }
+
+  .hero__raster {
+    display: grid;
+    gap: 28px;
+  }
+
+  .hero__kopf {
+    display: grid;
+    gap: 20px;
+  }
+
+  .hero h1 {
+    max-width: 11em;
+  }
+
+  .hero__text {
+    display: grid;
+    gap: 28px;
+    justify-items: start;
+  }
+
+  .hero__link {
+    padding: 12px 4px;
+    font-size: 1.1875rem;
+    font-weight: 800;
+  }
+
+  .hero__code {
+    padding: 14px 18px;
+    background: var(--papier);
+    color: var(--tinte);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.4;
+    transform: rotate(-1.2deg);
+  }
+
+  .hero__code-wert {
+    padding: 2px 8px;
+    margin-inline: 2px;
+    border: 2px dashed var(--tinte);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .hero__bild {
+    justify-self: center;
+    width: min(82vw, 420px);
+    margin-top: 8px;
+  }
+
+  .hero__bild :global(img) {
+    width: 100%;
+  }
+
+  @media (min-width: 960px) {
+    .hero__raster {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      column-gap: 48px;
+      row-gap: 40px;
+    }
+
+    .hero__kopf {
+      grid-column: 1 / -1;
+    }
+
+    .hero__text {
+      align-content: start;
+    }
+
+    .hero__bild {
+      justify-self: end;
+      align-self: start;
+      width: min(100%, 440px);
+      margin-top: 0;
+    }
+  }
+
+  /* ---------- Galerie ---------- */
+  .galerie {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .galerie__kachel {
+    padding: clamp(12px, 2.5vw, 32px);
+    background: var(--papier-2);
+    border-radius: var(--radius);
+  }
+
+  .galerie__kachel :global(img) {
+    width: 100%;
+  }
+
+  @media (min-width: 960px) {
+    .galerie {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+  }
+
+  /* ---------- Warum ---------- */
+  .warum__raster {
+    display: grid;
+    gap: 32px;
+  }
+
+  .warum__text {
+    max-width: 30em;
+    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+    line-height: 1.45;
+  }
+
+  .warum__karten {
+    display: grid;
+    gap: 16px;
+  }
+
+  .warum__karte {
+    display: grid;
+    gap: 28px;
+  }
+
+  .warum__karte h3 {
+    font-size: var(--fs-h3);
+  }
+
+  @media (min-width: 960px) {
+    .warum__raster {
+      grid-template-columns: 1.1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+  }
+
+  /* ---------- FAQ ---------- */
+  @media (min-width: 960px) {
+    .faq-kurz {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 64px;
+      align-items: start;
+    }
+  }
+</style>

@@ -1,0 +1,109 @@
+---
+// Nummerierte Schritte; kompakt auf der Startseite, groß auf /so-laeufts/
+interface Schritt {
+  titel: string;
+  text: string;
+}
+interface Props {
+  schritte: Schritt[];
+  gross?: boolean;
+}
+const { schritte, gross = false } = Astro.props;
+const Titel = gross ? 'h2' : 'h3';
+---
+
+<ol role="list" class:list={['schritte', { 'schritte--gross': gross }]}>
+  {
+    schritte.map((s, i) => (
+      <li class="schritt">
+        <span class="schritt__nummer" aria-hidden="true">
+          {i + 1}
+        </span>
+        <div class="schritt__inhalt">
+          <Titel class="schritt__titel">
+            <span class="visually-hidden">Schritt {i + 1}: </span>
+            {s.titel}
+          </Titel>
+          <p>{s.text}</p>
+        </div>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .schritte {
+    display: grid;
+    gap: 0;
+    counter-reset: schritt;
+  }
+
+  .schritt {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 20px;
+    align-items: start;
+    padding-block: 28px;
+    border-top: 1px solid var(--schritt-linie, var(--tinte-2));
+  }
+
+  .schritt:last-child {
+    border-bottom: 1px solid var(--schritt-linie, var(--tinte-2));
+  }
+
+  .schritt__nummer {
+    min-width: 1.1em;
+    font-size: clamp(3rem, 2rem + 4vw, 5.5rem);
+    font-weight: 900;
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+    color: var(--rot);
+  }
+
+  .schritt__titel {
+    font-size: var(--fs-h3);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .schritt__inhalt p {
+    margin-top: 8px;
+    max-width: 34em;
+    color: var(--schritt-text, var(--papier-gedimmt));
+  }
+
+  @media (min-width: 900px) {
+    .schritte:not(.schritte--gross) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .schritte:not(.schritte--gross) .schritt {
+      grid-template-columns: 1fr;
+      gap: 24px;
+      padding-block: 28px 0;
+      border-bottom: 0;
+    }
+  }
+
+  /* Große Variante (/so-laeufts/) */
+  .schritte--gross .schritt {
+    gap: clamp(20px, 4vw, 64px);
+    padding-block: clamp(32px, 5vw, 64px);
+  }
+
+  .schritte--gross .schritt__nummer {
+    font-size: clamp(4.5rem, 2.5rem + 9vw, 10rem);
+  }
+
+  .schritte--gross .schritt__titel {
+    font-size: var(--fs-h2);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+  }
+
+  .schritte--gross .schritt__inhalt p {
+    margin-top: 16px;
+  }
+</style>

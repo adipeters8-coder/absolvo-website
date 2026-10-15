@@ -1,0 +1,117 @@
+---
+// Karten „Für wen“: verlinken die Schulform-Seiten
+import { shy } from '../lib/text';
+
+interface Props {
+  /** Pfad der aktuellen Seite, deren Karte weggelassen wird */
+  ausser?: string;
+  ebene?: 'h2' | 'h3';
+}
+const { ausser, ebene = 'h3' } = Astro.props;
+const Titel = ebene;
+
+const karten = [
+  {
+    href: '/abipullover/',
+    titel: 'Abi und Fachabi',
+    text: 'Abipullover mit Motto, Namensliste und allem, was zum Jahrgang gehört.',
+  },
+  {
+    href: '/abschlusspullover-realschule/',
+    titel: 'Realschule und Hauptschule',
+    text: 'Die 10. Klasse ist auch ein Abschluss. Klassenpullover mit allen Namen drauf.',
+  },
+  {
+    href: '/abschlusspullover-berufskolleg/',
+    titel: 'Berufskolleg und Ausbildung',
+    text: 'Wer zusammen durch die Prüfungen geht, darf das auch zeigen.',
+  },
+].filter((k) => k.href !== ausser);
+---
+
+<ul role="list" class:list={['schulkarten', { 'schulkarten--zwei': karten.length === 2 }]}>
+  {
+    karten.map((k) => (
+      <li>
+        <a class="schulkarte" href={k.href}>
+          <Titel class="schulkarte__titel">{shy(k.titel)}</Titel>
+          <p>{shy(k.text)}</p>
+          <span class="schulkarte__pfeil" aria-hidden="true">→</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .schulkarten {
+    display: grid;
+    gap: 16px;
+  }
+
+  @media (min-width: 860px) {
+    .schulkarten {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .schulkarten--zwei {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .schulkarten li {
+    display: grid;
+  }
+
+  .schulkarte {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 14px;
+    min-height: 100%;
+    padding: clamp(24px, 3vw, 36px);
+    background: var(--papier-2);
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  :global(.abschnitt--papier-2) .schulkarte {
+    background: var(--papier);
+  }
+
+  .schulkarte:hover {
+    border-color: var(--tinte);
+  }
+
+  .schulkarte__titel {
+    font-size: var(--fs-h3);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .schulkarte p {
+    color: var(--tinte-2);
+  }
+
+  .schulkarte__pfeil {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    margin-top: 8px;
+    border-radius: 50%;
+    background: var(--tinte);
+    color: var(--papier);
+    font-size: 1.375rem;
+    font-weight: 700;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .schulkarte:hover .schulkarte__pfeil {
+    background: var(--rot);
+    transform: translateX(4px);
+  }
+</style>

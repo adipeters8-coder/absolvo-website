@@ -1,0 +1,99 @@
+---
+// Frage als <details>; die Antwort steht immer im HTML (für Google sichtbar)
+interface Props {
+  frage: string;
+  antwort: string;
+  ebene?: 'h2' | 'h3';
+}
+const { frage, antwort, ebene = 'h3' } = Astro.props;
+const Titel = ebene;
+---
+
+<details class="faq">
+  <summary>
+    <Titel class="faq__frage">{frage}</Titel>
+    <span class="faq__icon" aria-hidden="true"></span>
+  </summary>
+  <div class="faq__antwort">
+    <p>{antwort}</p>
+  </div>
+</details>
+
+<style>
+  .faq {
+    border-top: 1px solid var(--linie);
+  }
+
+  .faq:last-of-type {
+    border-bottom: 1px solid var(--linie);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-block: 24px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__frage {
+    font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+  }
+
+  summary:hover .faq__frage {
+    text-decoration: underline;
+    text-decoration-color: var(--rot);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.2em;
+  }
+
+  .faq__icon {
+    position: relative;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--tinte);
+  }
+
+  .faq__icon::before,
+  .faq__icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2.5px;
+    margin: -1.25px 0 0 -8px;
+    background: var(--papier);
+    border-radius: 2px;
+    transition: transform 0.2s ease;
+  }
+
+  .faq__icon::after {
+    transform: rotate(90deg);
+  }
+
+  .faq[open] .faq__icon {
+    background: var(--rot);
+  }
+
+  .faq[open] .faq__icon::after {
+    transform: rotate(0deg);
+  }
+
+  .faq__antwort {
+    padding-bottom: 28px;
+    max-width: 40em;
+    color: var(--tinte-2);
+  }
+</style>

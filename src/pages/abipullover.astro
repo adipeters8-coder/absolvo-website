@@ -1,0 +1,121 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import Rotstift from '../components/Rotstift.astro';
+import FuerWen from '../components/FuerWen.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { mockups } from '../data/mockups';
+import { produkt } from '../lib/schema';
+import { shy } from '../lib/text';
+
+const description =
+  'Abipullover für Gymnasium, Gesamtschule und Fachabi. Mit Motto, Namensliste und fairem Preis. Jetzt Preis für euren Jahrgang berechnen.';
+const merkmale = ['Motto vorne', 'Namensliste hinten', 'Name auf dem Ärmel', 'Eure Farbe'];
+---
+
+<Base
+  title="Abipullover 2027 mit Motto und Namen | ABSOLVO"
+  description={description}
+  jsonLd={[produkt(description)]}
+  breadcrumb={[{ name: 'Abipullover', pfad: '/abipullover/' }]}
+>
+  <PageHero label="Abi und Fachabi" schulform="abi" buttons teaser>
+    <Fragment slot="titel">
+      {shy('Abipullover')} für euren <span class="nowrap">Jahrgang.<Rotstift typ="haken" farbe="tinte" animiert /></span>
+    </Fragment>
+    <p class="lead">
+      Ob Gymnasium, Gesamtschule oder Fachoberschule: Euer Abipullover bekommt euer Motto vorne und alle Namen hinten. Ihr
+      stimmt das Design mit mir ab, jeder trägt sich selbst ein und am Ende kommt ein Karton zu euch an die Schule.
+    </p>
+  </PageHero>
+
+  <section class="abschnitt abschnitt--papier" aria-labelledby="drauf-titel">
+    <div class="container zweispaltig">
+      <div class="zweispaltig__text">
+        <SectionLabel nummer="01" text="Druck" />
+        <h2 id="drauf-titel">Was auf euren {shy('Abipullover')} <Rotstift typ="unterstreichung">kann</Rotstift></h2>
+        <ul role="list" class="merkmale">
+          {
+            merkmale.map((m, i) => (
+              <li>
+                <span class="label">{String(i + 1).padStart(2, '0')}</span>
+                <span>{m}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="bildpaar">
+        <div class="bildkachel">
+          <Picture
+            src={mockups.schwarzVorne.bild}
+            alt={mockups.schwarzVorne.alt}
+            formats={['avif', 'webp']}
+            widths={[240, 360, 520]}
+            sizes="(min-width: 960px) 260px, 44vw"
+          />
+        </div>
+        <div class="bildkachel">
+          <Picture
+            src={mockups.schwarzRuecken.bild}
+            alt={mockups.schwarzRuecken.alt}
+            formats={['avif', 'webp']}
+            widths={[240, 360, 520]}
+            sizes="(min-width: 960px) 260px, 44vw"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="abschnitt abschnitt--tinte" aria-labelledby="motto-titel">
+    <div class="container zweispaltig zweispaltig--bild-links">
+      <div class="zweispaltig__text">
+        <SectionLabel nummer="02" text="Motto" />
+        <h2 id="motto-titel">Noch kein Abi-Motto?</h2>
+        <p class="lead">Schreibt mir eure Ideen, ich mache daraus ein Motiv.</p>
+      </div>
+      <div class="bildkachel bild-schmal">
+        <Picture
+          src={mockups.grauVorne.bild}
+          alt={mockups.grauVorne.alt}
+          formats={['avif', 'webp']}
+          widths={[280, 420, 560]}
+          sizes="(min-width: 960px) 420px, 80vw"
+        />
+      </div>
+    </div>
+  </section>
+
+  <FuerWen nummer="03" ausser="/abipullover/" />
+
+  <CtaBand schulform="abi" />
+</Base>
+
+<style>
+  .merkmale {
+    width: 100%;
+    margin-top: 8px;
+    border-top: 1px solid var(--linie);
+  }
+
+  .merkmale li {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    padding-block: 18px;
+    border-bottom: 1px solid var(--linie);
+    font-size: var(--fs-h3);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .bild-schmal {
+    width: 100%;
+    max-width: 460px;
+    justify-self: center;
+  }
+</style>

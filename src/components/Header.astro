@@ -1,0 +1,335 @@
+---
+// Header ohne JavaScript: Dropdown und Burger laufen über <details>.
+import Logo from './Logo.astro';
+
+const pfad = Astro.url.pathname;
+const fuerWen = [
+  { href: '/abipullover/', text: 'Abi und Fachabi' },
+  { href: '/abschlusspullover-realschule/', text: 'Realschule und Hauptschule' },
+  { href: '/abschlusspullover-berufskolleg/', text: 'Berufskolleg' },
+];
+const links = [
+  { href: '/so-laeufts/', text: "So läuft's" },
+  { href: '/faq/', text: 'FAQ' },
+];
+const aktuell = (href: string) => (pfad === href ? 'page' : undefined);
+const fuerWenAktiv = fuerWen.some((l) => l.href === pfad);
+---
+
+<header class="kopf">
+  <div class="container kopf__innen">
+    <a class="kopf__logo" href="/" aria-current={aktuell('/')}>
+      <Logo variante="tinte" alt="ABSOLVO Startseite" />
+    </a>
+
+    <nav class="kopf__nav" aria-label="Hauptnavigation">
+      <ul role="list">
+        <li>
+          <details class="dropdown">
+            <summary class:list={['kopf__link', { 'ist-aktiv': fuerWenAktiv }]}>Für wen</summary>
+            <ul role="list" class="dropdown__menu">
+              {
+                fuerWen.map((l) => (
+                  <li>
+                    <a href={l.href} aria-current={aktuell(l.href)}>
+                      {l.text}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </details>
+        </li>
+        {
+          links.map((l) => (
+            <li>
+              <a class="kopf__link" href={l.href} aria-current={aktuell(l.href)}>
+                {l.text}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a class="btn kopf__cta" href="/preis-berechnen/" aria-current={aktuell('/preis-berechnen/')}>Preis berechnen</a>
+
+    <details class="burger">
+      <summary class="burger__knopf">
+        <span class="visually-hidden">Menü</span>
+        <span class="burger__icon" aria-hidden="true"><span></span></span>
+      </summary>
+      <nav class="burger__panel" aria-label="Menü">
+        <p class="label">Für wen</p>
+        <ul role="list" class="burger__liste">
+          {
+            fuerWen.map((l) => (
+              <li>
+                <a href={l.href} aria-current={aktuell(l.href)}>
+                  {l.text}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <ul role="list" class="burger__liste burger__liste--haupt">
+          {
+            links.map((l) => (
+              <li>
+                <a href={l.href} aria-current={aktuell(l.href)}>
+                  {l.text}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<style>
+  .kopf {
+    position: relative;
+    z-index: 20;
+    background: var(--papier);
+    border-bottom: 1px solid var(--linie);
+  }
+
+  .kopf__innen {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 72px;
+  }
+
+  .kopf__logo {
+    flex: none;
+    display: block;
+    width: 140px;
+    margin-right: auto;
+    padding-block: 8px;
+  }
+
+  .kopf__logo :global(img) {
+    width: 100%;
+  }
+
+  /* Mobil: kompakter Button. Rot-dunkel, damit 15 px Papierweiß AA schaffen (5,0:1). */
+  .kopf__cta {
+    flex: none;
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 0.9375rem;
+    --btn-bg: var(--rot-dunkel);
+    --btn-bg-hover: var(--tinte);
+  }
+
+  .kopf__nav {
+    display: none;
+  }
+
+  /* ---------- Burger (mobil) ---------- */
+  .burger {
+    flex: none;
+  }
+
+  .burger__knopf {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -6px;
+    border-radius: 12px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .burger__knopf::-webkit-details-marker {
+    display: none;
+  }
+
+  .burger__icon,
+  .burger__icon::before,
+  .burger__icon::after,
+  .burger__icon span {
+    display: block;
+    width: 22px;
+    height: 2.5px;
+    background: var(--tinte);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .burger__icon {
+    position: relative;
+    background: transparent;
+  }
+
+  .burger__icon::before,
+  .burger__icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .burger__icon::before {
+    top: -7px;
+  }
+
+  .burger__icon::after {
+    top: 7px;
+  }
+
+  .burger[open] .burger__icon span {
+    opacity: 0;
+  }
+
+  .burger[open] .burger__icon::before {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .burger[open] .burger__icon::after {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .burger__panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 24px var(--rand) 32px;
+    background: var(--papier);
+    border-bottom: 1px solid var(--linie);
+  }
+
+  .burger__liste {
+    margin-top: 8px;
+  }
+
+  .burger__liste a {
+    display: block;
+    padding-block: 10px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    text-decoration: none;
+  }
+
+  .burger__liste--haupt {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--linie);
+  }
+
+  .burger__liste a[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-color: var(--rot);
+    text-decoration-thickness: 3px;
+  }
+
+  /* ---------- Desktop ---------- */
+  @media (min-width: 960px) {
+    .kopf__innen {
+      gap: 32px;
+      min-height: 88px;
+    }
+
+    .kopf__logo {
+      width: 180px;
+      margin-right: 0;
+    }
+
+    .kopf__nav {
+      display: block;
+      margin-left: auto;
+    }
+
+    .kopf__nav > ul {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .kopf__cta {
+      min-height: 48px;
+      padding: 12px 22px;
+      font-size: 1.1875rem;
+      --btn-bg: var(--rot);
+      --btn-bg-hover: var(--rot-dunkel);
+    }
+
+    .burger {
+      display: none;
+    }
+  }
+
+  .kopf__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .kopf__link::-webkit-details-marker {
+    display: none;
+  }
+
+  .kopf__link:hover,
+  .kopf__link[aria-current='page'],
+  .kopf__link.ist-aktiv {
+    text-decoration: underline;
+    text-decoration-color: var(--rot);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.3em;
+  }
+
+  summary.kopf__link::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    margin-top: -4px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.15s ease;
+  }
+
+  .dropdown {
+    position: relative;
+  }
+
+  .dropdown[open] summary.kopf__link::after {
+    transform: translateY(4px) rotate(-135deg);
+  }
+
+  .dropdown__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 280px;
+    padding: 8px;
+    background: var(--papier-2);
+    border-radius: var(--radius);
+  }
+
+  .dropdown__menu a {
+    display: block;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .dropdown__menu a:hover,
+  .dropdown__menu a[aria-current='page'] {
+    background: var(--papier);
+  }
+</style>

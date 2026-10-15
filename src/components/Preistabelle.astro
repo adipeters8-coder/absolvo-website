@@ -1,0 +1,88 @@
+---
+// Statische Staffelpreise aus preise.json: für Google und für Besucher ohne JavaScript
+import preise from '../data/preise.json';
+import { cent, formatEuro } from '../lib/preis';
+
+interface Props {
+  kompakt?: boolean;
+}
+const { kompakt = false } = Astro.props;
+
+const stufen = [...preise.staffel_basis].sort((a, b) => a.ab - b.ab);
+const zeilen = stufen.map((stufe, i) => {
+  const naechste = stufen[i + 1];
+  return {
+    menge: naechste ? `${stufe.ab} bis ${naechste.ab - 1} Hoodies` : `ab ${stufe.ab} Hoodies`,
+    preis: `ab ${formatEuro(cent(stufe.preis))}`,
+  };
+});
+---
+
+<table class:list={['preistabelle', { 'preistabelle--kompakt': kompakt }]}>
+  <thead>
+    <tr>
+      <th scope="col">Menge</th>
+      <th scope="col">Preis pro Hoodie</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      zeilen.map((z) => (
+        <tr>
+          <th scope="row">{z.menge}</th>
+          <td>{z.preis}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+
+<style>
+  .preistabelle {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--tabelle-linie, var(--linie));
+    text-align: left;
+    vertical-align: baseline;
+  }
+
+  thead th {
+    padding-top: 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--tabelle-kopf, var(--tinte-2));
+  }
+
+  tbody th {
+    font-weight: 700;
+  }
+
+  td {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  thead th:last-child {
+    text-align: right;
+  }
+
+  .preistabelle--kompakt th,
+  .preistabelle--kompakt td {
+    padding-block: 10px;
+    font-size: 1rem;
+  }
+
+  .preistabelle--kompakt thead th {
+    font-size: var(--fs-label);
+  }
+</style>

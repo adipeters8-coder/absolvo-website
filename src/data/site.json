@@ -1,0 +1,17 @@
+{
+  "name": "ABSOLVO",
+  "url": "https://www.absolvo.shop",
+  "instagram": {
+    "anzeige": "@absolvo [Handle prüfen]",
+    "url": "https://www.instagram.com/absolvo/"
+  },
+  "tiktok": {
+    "anzeige": "[Handle]",
+    "url": ""
+  },
+  "mail": {
+    "anzeige": "[hallo@absolvo.shop]",
+    "adresse": "hallo@absolvo.shop"
+  },
+  "einzelzahlung_umgesetzt": false
+}

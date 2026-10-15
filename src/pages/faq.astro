@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import FaqItem from '../components/FaqItem.astro';
+import FuerWen from '../components/FuerWen.astro';
+import CtaBand from '../components/CtaBand.astro';
+import faq from '../data/faq.json';
+import { faqSeite } from '../lib/schema';
+---
+
+<Base
+  title="Fragen zu Abschlusspullovern | ABSOLVO"
+  description="Häufige Fragen zu Abschlusspullovern bei ABSOLVO: Preis, Mindestmenge, Größen, Design und Lieferung."
+  jsonLd={[faqSeite(faq)]}
+  breadcrumb={[{ name: 'FAQ', pfad: '/faq/' }]}
+>
+  <PageHero label="FAQ">
+    <Fragment slot="titel">Häufige Fragen</Fragment>
+  </PageHero>
+
+  <section class="abschnitt abschnitt--papier" aria-label="Fragen und Antworten">
+    <div class="container">
+      <div class="faq-liste">
+        {faq.map((f) => <FaqItem frage={f.frage} antwort={f.antwort} ebene="h2" />)}
+      </div>
+    </div>
+  </section>
+
+  <FuerWen nummer="01" variante="papier-2" />
+
+  <CtaBand />
+</Base>
+
+<style>
+  .faq-liste {
+    max-width: 52rem;
+  }
+</style>

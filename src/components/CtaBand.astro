@@ -1,0 +1,49 @@
+---
+// Schluss-CTA auf jeder Seite (Rot)
+import Button from './Button.astro';
+
+interface Props {
+  /** füllt die Schulform im Preisrechner vor */
+  schulform?: 'abi' | 'realschule' | 'berufskolleg';
+  /** eigenes Ziel, z. B. Sprung zum Rechner auf /preis-berechnen/ */
+  href?: string;
+}
+const { schulform, href: ziel } = Astro.props;
+const href = ziel ?? (schulform ? `/preis-berechnen/?schulform=${schulform}` : '/preis-berechnen/');
+---
+
+<section class="abschnitt abschnitt--rot cta-band" aria-labelledby="cta-titel">
+  <div class="container cta-band__innen">
+    <h2 id="cta-titel">Euer Jahrgang ist dran?</h2>
+    <div class="cta-band__rechts">
+      <p class="lead">Rechnet euren Preis in einer Minute aus und schickt die Anfrage direkt ab.</p>
+      <Button href={href} variante="auf-rot">Preis berechnen</Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-band__innen {
+    display: grid;
+    gap: 28px;
+  }
+
+  .cta-band h2 {
+    max-width: 9em;
+  }
+
+  .cta-band__rechts {
+    display: grid;
+    gap: 28px;
+    justify-items: start;
+    align-content: end;
+  }
+
+  @media (min-width: 960px) {
+    .cta-band__innen {
+      grid-template-columns: 1.2fr 1fr;
+      align-items: end;
+      gap: 48px;
+    }
+  }
+</style>

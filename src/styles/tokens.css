@@ -1,0 +1,46 @@
+/* ABSOLVO Design-Tokens (Briefing Abschnitt 4) */
+:root {
+  /* Farben */
+  --rot: #E3262B;          /* Korrekturrot, Akzente, Buttons, Rotstift */
+  --rot-dunkel: #C91F24;   /* Hover */
+  --papier: #F4F1EA;       /* Seitenhintergrund */
+  --papier-2: #EBE7DE;     /* Karten, Flächen */
+  --tinte: #17181C;        /* Text, dunkle Sektionen */
+  --tinte-2: #2E2F33;
+  --grau: #6B6A66;         /* Nebentexte */
+  --linie: #E2DDD2;
+
+  /* Abgeleitete Textfarben, damit kleine Schrift WCAG AA schafft */
+  --rot-text: var(--rot-dunkel);   /* kleine rote Schrift auf Papier/Papier-2 (5,0:1 / 4,6:1) */
+  --rot-auf-tinte: #FF5A5F;        /* kleine rote Schrift auf Tinte (5,8:1) */
+  --papier-gedimmt: #BDB8AE;       /* Nebentext auf Tinte */
+
+  /* Schriften */
+  --font-text: 'Inter Tight Variable', 'Inter Tight Fallback', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Typo-Skala, mobil bis Desktop */
+  --fs-h1: clamp(3rem, 1.25rem + 7.4vw, 7.5rem);         /* 48 bis 120 px */
+  --fs-h2: clamp(2.25rem, 1.1rem + 4.9vw, 4.5rem);       /* 36 bis 72 px */
+  --fs-h3: clamp(1.5rem, 1.25rem + 1.1vw, 2rem);         /* 24 bis 32 px */
+  --fs-text: clamp(1.125rem, 1.05rem + 0.3vw, 1.25rem);  /* 18 bis 20 px */
+  --fs-lead: clamp(1.5rem, 1.3rem + 0.9vw, 1.875rem);    /* 24 bis 30 px, Fließtext auf Rot */
+  --fs-label: 0.8125rem;                                 /* 13 px */
+  --fs-klein: 0.9375rem;                                 /* 15 px */
+
+  /* Layout */
+  --max: 1200px;
+  --rand: 20px;
+  --abschnitt: clamp(4rem, 2.5rem + 6vw, 8.5rem);
+  --radius: 16px;
+  --radius-pille: 999px;
+
+  /* Fokus */
+  --fokus: var(--tinte);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --rand: 48px;
+  }
+}

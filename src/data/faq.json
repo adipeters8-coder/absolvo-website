@@ -1,0 +1,43 @@
+[
+  {
+    "frage": "Was kostet ein Abschlusspullover?",
+    "antwort": "Das hängt von Menge, Druck und Extras ab. Im Preisrechner seht ihr den Preis pro Hoodie sofort."
+  },
+  {
+    "frage": "Gibt es eine Mindestmenge?",
+    "antwort": "Ja, ab [Mindestmenge] Stück. Je mehr ihr seid, desto günstiger wird jeder Pulli."
+  },
+  {
+    "frage": "Kann jeder seine eigene Größe wählen?",
+    "antwort": "Ja. Jeder trägt Größe und Namen selbst über einen Link ein."
+  },
+  {
+    "frage": "Muss einer für alle das Geld einsammeln?",
+    "antwort": "Das klären wir bei der Anfrage, Ziel ist, dass jeder selbst zahlt.",
+    "_todo": "[Antwort je nach Zahlungslösung]"
+  },
+  {
+    "frage": "Wie lange dauert es bis zur Lieferung?",
+    "antwort": "Rechnet ab Freigabe mit [X] Wochen."
+  },
+  {
+    "frage": "Können wir verschiedene Farben bestellen?",
+    "antwort": "[klären]"
+  },
+  {
+    "frage": "Wer macht das Design?",
+    "antwort": "Ihr schickt Motto, Logo oder Idee, ich mache daraus ein druckfertiges Motiv. Ihr gebt frei, bevor gedruckt wird."
+  },
+  {
+    "frage": "Was ist, wenn ein Name falsch geschrieben ist?",
+    "antwort": "Ihr seht die komplette Namensliste vor dem Druck und gebt sie frei."
+  },
+  {
+    "frage": "Gibt es Übergrößen?",
+    "antwort": "Ja, bis 5XL gegen Aufpreis."
+  },
+  {
+    "frage": "Liefert ihr direkt an die Schule?",
+    "antwort": "Ja, oder an eine Person aus der Stufe."
+  }
+]

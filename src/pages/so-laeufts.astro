@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import Rotstift from '../components/Rotstift.astro';
+import StepList from '../components/StepList.astro';
+import FuerWen from '../components/FuerWen.astro';
+import CtaBand from '../components/CtaBand.astro';
+
+// Texte aus dem Briefing (Startseite, Preisrechner und FAQ) zu je zwei Sätzen zusammengesetzt
+const schritte = [
+  {
+    titel: 'Preis berechnen.',
+    text: 'Menge, Farbe und Druck eingeben, Preis sofort sehen. Danach schickt ihr die Anfrage ab und ich melde mich bei euch.',
+  },
+  {
+    titel: 'Design abstimmen.',
+    text: 'Ihr schickt Motto oder Idee, ich mache es druckfertig. Ihr gebt frei, bevor gedruckt wird.',
+  },
+  {
+    titel: 'Namen und Größen sammeln.',
+    text: 'Über einen Link, jeder trägt sich selbst ein. Ihr seht die komplette Namensliste vor dem Druck und gebt sie frei.',
+  },
+  {
+    titel: 'Druck und Lieferung.',
+    text: 'Gedruckt in Deutschland, geliefert zu euch. Rechnet ab Freigabe mit [X] Wochen.',
+  },
+];
+---
+
+<Base
+  title="Abschlusspullover bestellen: So läuft's | ABSOLVO"
+  description="In vier Schritten zum Abschlusspullover. Preis berechnen, Design abstimmen, Namen sammeln, Lieferung. Plant am besten [X] Wochen vor eurem Abschluss ein."
+  breadcrumb={[{ name: "So läuft's", pfad: '/so-laeufts/' }]}
+>
+  <PageHero label="In vier Schritten" buttons>
+    <Fragment slot="titel">
+      So läuft's bei <span class="nowrap">ABSOLVO.<Rotstift typ="haken" farbe="tinte" animiert /></span>
+    </Fragment>
+  </PageHero>
+
+  <section class="abschnitt abschnitt--papier schritte-abschnitt" aria-label="Ablauf in vier Schritten">
+    <div class="container">
+      <div class="abschnitt__kopf">
+        <SectionLabel nummer="01" text="Ablauf" />
+      </div>
+      <StepList schritte={schritte} gross />
+    </div>
+  </section>
+
+  <section class="abschnitt abschnitt--tinte" aria-labelledby="wann-titel">
+    <div class="container">
+      <div class="abschnitt__kopf">
+        <SectionLabel nummer="02" text="Zeitplan" />
+        <h2 id="wann-titel">Wann solltet ihr <Rotstift typ="unterstreichung">bestellen?</Rotstift></h2>
+      </div>
+      <p class="lead">
+        Plant ab Anfrage rund [X] Wochen ein. Wenn ihr den Pulli zur Mottowoche oder Zeugnisvergabe tragen wollt, fragt
+        lieber früher an.
+      </p>
+    </div>
+  </section>
+
+  <FuerWen nummer="03" />
+
+  <CtaBand />
+</Base>
+
+<style>
+  .schritte-abschnitt {
+    --schritt-linie: var(--linie);
+    --schritt-text: var(--tinte-2);
+  }
+
+  .schritte-abschnitt .abschnitt__kopf {
+    margin-bottom: 0;
+  }
+</style>

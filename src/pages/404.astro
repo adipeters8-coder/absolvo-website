@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Rotstift from '../components/Rotstift.astro';
+import Button from '../components/Button.astro';
+import CtaBand from '../components/CtaBand.astro';
+---
+
+<Base title="Seite nicht gefunden | ABSOLVO" description="Die Seite hat leider nicht bestanden." noindex>
+  <PageHero label="Fehler 404" variante="papier">
+    <Fragment slot="titel">
+      Die Seite hat leider nicht <Rotstift typ="kringel">bestanden.</Rotstift>
+    </Fragment>
+    <Button href="/preis-berechnen/">Zum Preisrechner</Button>
+  </PageHero>
+
+  <CtaBand />
+</Base>

@@ -1,0 +1,80 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import Rotstift from '../components/Rotstift.astro';
+import Preistabelle from '../components/Preistabelle.astro';
+import FuerWen from '../components/FuerWen.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { mockups } from '../data/mockups';
+import { produkt } from '../lib/schema';
+import { shy } from '../lib/text';
+
+const description =
+  'Abschlusspullover für Realschule und Hauptschule. Klassenpullover mit allen Namen drauf, für die ganze Stufe oder nur eure Klasse.';
+---
+
+<Base
+  title="Abschlusspullover Realschule und 10. Klasse | ABSOLVO"
+  description={description}
+  jsonLd={[produkt(description)]}
+  breadcrumb={[{ name: 'Abschlusspullover Realschule', pfad: '/abschlusspullover-realschule/' }]}
+>
+  <PageHero label="Realschule und Hauptschule" schulform="realschule" buttons teaser>
+    <Fragment slot="titel">
+      {shy('Abschlusspullover')} für die <Rotstift typ="kringel" farbe="tinte">10.</Rotstift> Klasse.
+    </Fragment>
+    <p class="lead">
+      Die 10. Klasse ist auch ein Abschluss, und zwar ein ziemlich großer. Ihr bekommt einen Klassenpullover mit allen
+      Namen drauf, für die ganze Stufe oder nur für eure Klasse.
+    </p>
+  </PageHero>
+
+  <section class="abschnitt abschnitt--papier" aria-labelledby="stufe-titel">
+    <div class="container zweispaltig">
+      <div class="zweispaltig__text">
+        <SectionLabel nummer="01" text="Stufe oder Klasse" />
+        <h2 id="stufe-titel">Ganze Stufe oder nur eure Klasse?</h2>
+        <p>
+          Beides geht. Kleinere Klassen ab [Mindestmenge] Stück, als Stufe wird es pro Pulli günstiger.
+        </p>
+        <Preistabelle />
+      </div>
+      <div class="bildkachel bild-schmal">
+        <Picture
+          src={mockups.weissRuecken.bild}
+          alt={mockups.weissRuecken.alt}
+          formats={['avif', 'webp']}
+          widths={[280, 420, 560]}
+          sizes="(min-width: 960px) 420px, 80vw"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="abschnitt abschnitt--tinte" aria-labelledby="wer-titel">
+    <div class="container">
+      <div class="abschnitt__kopf">
+        <SectionLabel nummer="02" text="Bestellung" />
+        <h2 id="wer-titel">Wer bestellt?</h2>
+      </div>
+      <p class="lead">
+        Meistens kümmern sich Klassensprecher oder Klassenleitung. Ihr habt bei mir einen festen Ansprechpartner, vom
+        ersten Entwurf bis zur Lieferung.
+      </p>
+    </div>
+  </section>
+
+  <FuerWen nummer="03" ausser="/abschlusspullover-realschule/" />
+
+  <CtaBand schulform="realschule" />
+</Base>
+
+<style>
+  .bild-schmal {
+    width: 100%;
+    max-width: 460px;
+    justify-self: center;
+  }
+</style>

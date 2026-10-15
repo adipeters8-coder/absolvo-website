@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import site from '../data/site.json';
+---
+
+<Base
+  title="Impressum | ABSOLVO"
+  description="Impressum von ABSOLVO, Abschlusspullover aus Düsseldorf."
+  breadcrumb={[{ name: 'Impressum', pfad: '/impressum/' }]}
+>
+  <PageHero label="Rechtliches" variante="papier">
+    <Fragment slot="titel">Impressum</Fragment>
+  </PageHero>
+
+  <!-- Platzhalter-Struktur: Inhalte liefert Adrian -->
+  <section class="abschnitt abschnitt--papier impressum" aria-label="Angaben">
+    <div class="container prosa">
+      <h2>Angaben gemäß § 5 DDG</h2>
+      <p>
+        Adrian Peters<br />
+        [Firmenname, falls vorhanden]<br />
+        [Straße und Hausnummer]<br />
+        [PLZ] Düsseldorf
+      </p>
+
+      <h2>Kontakt</h2>
+      <p>
+        E-Mail: <a href={`mailto:${site.mail.adresse}`}>{site.mail.anzeige}</a><br />
+        Telefon: [Telefonnummer]
+      </p>
+
+      <h2>Umsatzsteuer-ID</h2>
+      <p>[USt-IdNr. nach § 27a UStG, falls vorhanden]</p>
+
+      <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+      <p>Adrian Peters, [Anschrift wie oben]</p>
+
+      <h2>Verbraucherstreitbeilegung</h2>
+      <p>[Angabe zur Teilnahme an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle]</p>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .impressum {
+    padding-top: clamp(32px, 4vw, 56px);
+  }
+</style>

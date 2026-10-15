@@ -1,0 +1,113 @@
+---
+// Seitenkopf der Unterseiten: Label, H1 (Slot „titel“), Text, optional Buttons und Preis-Teaser
+import SectionLabel from './SectionLabel.astro';
+import Button from './Button.astro';
+import PriceTeaser from './PriceTeaser.astro';
+
+interface Props {
+  label: string;
+  variante?: 'rot' | 'papier';
+  schulform?: 'abi' | 'realschule' | 'berufskolleg';
+  buttons?: boolean;
+  teaser?: boolean;
+}
+const { label, variante = 'rot', schulform, buttons = false, teaser = false } = Astro.props;
+const rechnerHref = schulform ? `/preis-berechnen/?schulform=${schulform}` : '/preis-berechnen/';
+const hatText = Astro.slots.has('default') || buttons;
+const hatAside = teaser || Astro.slots.has('aside');
+---
+
+<section
+  class:list={['abschnitt', `abschnitt--${variante}`, 'seitenkopf', { 'seitenkopf--aside': hatAside }]}
+  aria-labelledby="seiten-titel"
+>
+  <div class="container seitenkopf__raster">
+    <div class="seitenkopf__kopf">
+      <SectionLabel text={label} />
+      <h1 id="seiten-titel"><slot name="titel" /></h1>
+    </div>
+    {
+      hatText && (
+        <div class="seitenkopf__text">
+          <slot />
+          {buttons && (
+            <div class="btn-reihe">
+              <Button href={rechnerHref} variante={variante === 'rot' ? 'auf-rot' : 'primaer'}>
+                Preis berechnen
+              </Button>
+              <a class="pfeil-link seitenkopf__link" href="/so-laeufts/">
+                So läuft's
+              </a>
+            </div>
+          )}
+        </div>
+      )
+    }
+    {
+      teaser && (
+        <div class="seitenkopf__aside">
+          <PriceTeaser schulform={schulform} />
+        </div>
+      )
+    }
+    {
+      Astro.slots.has('aside') && (
+        <div class="seitenkopf__aside">
+          <slot name="aside" />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .seitenkopf {
+    padding-block: clamp(40px, 6vw, 88px) clamp(56px, 8vw, 112px);
+  }
+
+  .seitenkopf__raster {
+    display: grid;
+    gap: 32px;
+  }
+
+  .seitenkopf__kopf {
+    display: grid;
+    gap: 20px;
+  }
+
+  .seitenkopf h1 {
+    max-width: 11em;
+  }
+
+  .seitenkopf__text {
+    display: grid;
+    gap: 28px;
+    justify-items: start;
+    align-content: start;
+  }
+
+  .seitenkopf__link {
+    padding: 12px 4px;
+    font-size: 1.1875rem;
+    font-weight: 800;
+  }
+
+  @media (min-width: 960px) {
+    .seitenkopf--aside .seitenkopf__raster {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      column-gap: clamp(40px, 6vw, 96px);
+      row-gap: 48px;
+    }
+
+    .seitenkopf__kopf {
+      grid-column: 1 / -1;
+    }
+
+    .seitenkopf__aside {
+      align-self: start;
+      max-width: 420px;
+      width: 100%;
+      justify-self: end;
+    }
+  }
+</style>
