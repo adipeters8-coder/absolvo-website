@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import CtaBand from '../components/CtaBand.astro';
 import site from '../data/site.json';
+
+const { inhaber } = site;
 ---
 
 <Base
@@ -14,31 +16,30 @@ import site from '../data/site.json';
     <Fragment slot="titel">Impressum</Fragment>
   </PageHero>
 
-  <!-- Platzhalter-Struktur: Inhalte liefert Adrian -->
   <section class="abschnitt abschnitt--papier impressum" aria-label="Angaben">
     <div class="container prosa">
       <h2>Angaben gemäß § 5 DDG</h2>
       <p>
-        Adrian Peters<br />
-        [Firmenname, falls vorhanden]<br />
-        [Straße und Hausnummer]<br />
-        [PLZ] Düsseldorf
+        ABSOLVO<br />
+        Inhaber: {inhaber.name}<br />
+        {inhaber.strasse}<br />
+        {inhaber.plz} {inhaber.ort}
       </p>
 
       <h2>Kontakt</h2>
-      <p>
-        E-Mail: <a href={`mailto:${site.mail.adresse}`}>{site.mail.anzeige}</a><br />
-        Telefon: [Telefonnummer]
-      </p>
+      <p>E-Mail: <a href={`mailto:${site.mail.adresse}`}>{site.mail.anzeige}</a></p>
 
       <h2>Umsatzsteuer-ID</h2>
       <p>[USt-IdNr. nach § 27a UStG, falls vorhanden]</p>
 
       <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
-      <p>Adrian Peters, [Anschrift wie oben]</p>
+      <p>{inhaber.name}, {inhaber.strasse}, {inhaber.plz} {inhaber.ort}</p>
 
       <h2>Verbraucherstreitbeilegung</h2>
-      <p>[Angabe zur Teilnahme an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle]</p>
+      <p>
+        Ich bin nicht verpflichtet und nicht bereit, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle
+        teilzunehmen.
+      </p>
     </div>
   </section>
 

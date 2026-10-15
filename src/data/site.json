@@ -1,6 +1,12 @@
 {
   "name": "ABSOLVO",
   "url": "https://www.absolvo.shop",
+  "inhaber": {
+    "name": "Adrian Peters",
+    "strasse": "Schillerstraße 44",
+    "plz": "40237",
+    "ort": "Düsseldorf"
+  },
   "instagram": {
     "anzeige": "@absolvo [Handle prüfen]",
     "url": "https://www.instagram.com/absolvo/"
