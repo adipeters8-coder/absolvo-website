@@ -9,7 +9,7 @@ ABSOLVO verkauft Abschlusspullover (Hoodies mit Motto vorne und Namensliste hint
 Ziel der Website: Besucher (Stufensprecher, Abikomitee, Klassenleitung, 15 bis 20 Jahre) verstehen in 10 Sekunden, was ABSOLVO ist, rechnen ihren Preis im Konfigurator aus und schicken eine Anfrage ab. Jede Seite führt zum Preisrechner. Es gibt keinen Shop mit Warenkorb, nur Anfrage.
 
 Domain: https://www.absolvo.shop (absolvo.shop leitet auf www weiter)
-Instagram: @absolvo [Handle prüfen] · TikTok: [Handle] · Mail: [hallo@absolvo.shop]
+Instagram: @absolvooo (https://www.instagram.com/absolvooo/) · TikTok: [Handle] · Mail: hello@adrianpeters.com
 
 ## 2. Technik
 
