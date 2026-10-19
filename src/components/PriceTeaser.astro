@@ -4,12 +4,7 @@ import preise from '../data/preise.json';
 import { cent, formatEuro } from '../lib/preis';
 import Button from './Button.astro';
 
-interface Props {
-  schulform?: 'abi' | 'realschule' | 'berufskolleg';
-}
-const { schulform } = Astro.props;
 const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[0];
-const href = schulform ? `/preis-berechnen/?schulform=${schulform}` : '/preis-berechnen/';
 ---
 
 <div class="teaser">
@@ -17,7 +12,7 @@ const href = schulform ? `/preis-berechnen/?schulform=${schulform}` : '/preis-be
   <p class="teaser__preis">{formatEuro(cent(guenstigste.preis))}</p>
   <p class="teaser__einheit">pro Hoodie, ab {guenstigste.ab} Stück</p>
   <p class="teaser__hinweis">{preise.hinweis}</p>
-  <Button href={href}>Preis berechnen</Button>
+  <Button href="/preis-berechnen/">Preis berechnen</Button>
 </div>
 
 <style>

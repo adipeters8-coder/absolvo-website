@@ -3,13 +3,10 @@
 import Button from './Button.astro';
 
 interface Props {
-  /** füllt die Schulform im Preisrechner vor */
-  schulform?: 'abi' | 'realschule' | 'berufskolleg';
   /** eigenes Ziel, z. B. Sprung zum Rechner auf /preis-berechnen/ */
   href?: string;
 }
-const { schulform, href: ziel } = Astro.props;
-const href = ziel ?? (schulform ? `/preis-berechnen/?schulform=${schulform}` : '/preis-berechnen/');
+const { href = '/preis-berechnen/' } = Astro.props;
 ---
 
 <section class="abschnitt abschnitt--rot cta-band" aria-labelledby="cta-titel">

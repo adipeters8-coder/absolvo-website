@@ -23,12 +23,6 @@ const farbwert = (name: string) => (farbwerte as Record<string, string>)[name] ?
 const reglerMax = Math.max(150, Math.max(...preise.staffel_basis.map((s) => s.ab)) + 50);
 const startMenge = 30;
 
-const schulformen = [
-  { schluessel: 'abi', label: 'Abi/Fachabi' },
-  { schluessel: 'realschule', label: 'Realschule/Hauptschule' },
-  { schluessel: 'berufskolleg', label: 'Berufskolleg/Ausbildung' },
-  { schluessel: 'sonstiges', label: 'Sonstiges' },
-];
 const druckVorne = [
   { wert: '1 Farbe', farben: 1, aufpreis: null },
   { wert: '2 Farben', farben: 2, aufpreis: plus(a.druck_vorne_2_farben) },
@@ -69,20 +63,6 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
         data-formspree={formspreeId ? 'ja' : 'nein'}
       >
         <div class="rechner__konfig">
-          <fieldset class="feld">
-            <legend class="feld__titel">Schulform</legend>
-            <div class="optionen optionen--raster">
-              {
-                schulformen.map((s, i) => (
-                  <label class="option">
-                    <input type="radio" name="schulform" value={s.label} data-schluessel={s.schluessel} checked={i === 0} />
-                    <span class="option__text">{s.label.split('/').map((teil, j, alle) => (j < alle.length - 1 ? <Fragment>{teil}/<wbr /></Fragment> : teil))}</span>
-                  </label>
-                ))
-              }
-            </div>
-          </fieldset>
-
           <div class="feld">
             <label class="feld__titel" for="anzahl">Anzahl Hoodies</label>
             <div class="menge">
@@ -192,6 +172,27 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
               </label>
             </div>
           </fieldset>
+
+          <div class="feld">
+            <label class="feld__titel" for="design-link">
+              Link zu eurem Design <span class="feld__optional">(optional)</span>
+            </label>
+            <input
+              class="eingabe"
+              type="text"
+              id="design-link"
+              name="design_link"
+              inputmode="url"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="https://"
+              aria-describedby="design-link-hilfe"
+            />
+            <p class="feld__hilfe" id="design-link-hilfe">
+              Zum Beispiel von Google Drive, Dropbox oder WeTransfer. Der Link muss ohne Anmeldung aufgehen.
+            </p>
+          </div>
 
           <div class="feld">
             <label class="feld__titel" for="rabattcode">Rabattcode <span class="feld__optional">(optional)</span></label>
@@ -474,17 +475,6 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
     gap: 10px;
   }
 
-  .optionen--raster {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  @media (min-width: 520px) {
-    .optionen--raster {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
   .option {
     position: relative;
     display: flex;
@@ -672,6 +662,12 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
   }
 
   /* Code-Status */
+  .feld__hilfe {
+    margin-top: 8px;
+    font-size: var(--fs-klein);
+    color: var(--grau);
+  }
+
   .code-status {
     min-height: 1.5em;
     margin-top: 8px;

@@ -1,5 +1,4 @@
 ---
-import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import SectionLabel from '../components/SectionLabel.astro';
@@ -7,7 +6,6 @@ import Rotstift from '../components/Rotstift.astro';
 import Preistabelle from '../components/Preistabelle.astro';
 import FuerWen from '../components/FuerWen.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { mockups } from '../data/mockups';
 import { produkt } from '../lib/schema';
 import { shy } from '../lib/text';
 
@@ -21,7 +19,7 @@ const description =
   jsonLd={[produkt(description)]}
   breadcrumb={[{ name: 'Abschlusspullover Realschule', pfad: '/abschlusspullover-realschule/' }]}
 >
-  <PageHero label="Realschule und Hauptschule" schulform="realschule" buttons teaser>
+  <PageHero label="Realschule und Hauptschule" buttons teaser>
     <Fragment slot="titel">
       {shy('Abschlusspullover')} für die <Rotstift typ="kringel" farbe="tinte">10.</Rotstift> Klasse.
     </Fragment>
@@ -39,17 +37,8 @@ const description =
         <p>
           Beides geht. Kleinere Klassen ab [Mindestmenge] Stück, als Stufe wird es pro Pulli günstiger.
         </p>
-        <Preistabelle />
       </div>
-      <div class="bildkachel bild-schmal">
-        <Picture
-          src={mockups.weissRuecken.bild}
-          alt={mockups.weissRuecken.alt}
-          formats={['avif', 'webp']}
-          widths={[280, 420, 560]}
-          sizes="(min-width: 960px) 420px, 80vw"
-        />
-      </div>
+      <Preistabelle />
     </div>
   </section>
 
@@ -68,13 +57,6 @@ const description =
 
   <FuerWen nummer="03" ausser="/abschlusspullover-realschule/" />
 
-  <CtaBand schulform="realschule" />
+  <CtaBand />
 </Base>
 
-<style>
-  .bild-schmal {
-    width: 100%;
-    max-width: 460px;
-    justify-self: center;
-  }
-</style>

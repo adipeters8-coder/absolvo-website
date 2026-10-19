@@ -46,13 +46,6 @@ function start() {
     $<HTMLInputElement>(`[data-feld="${schluessel}"]`).value = wert;
   };
 
-  // Schulform aus ?schulform= vorauswählen
-  const schulform = new URLSearchParams(window.location.search).get('schulform')?.toLowerCase();
-  if (schulform) {
-    const treffer = $$<HTMLInputElement>('input[name="schulform"]').find((r) => r.dataset.schluessel === schulform);
-    if (treffer) treffer.checked = true;
-  }
-
   // Wunschtermin nicht in der Vergangenheit
   const heute = new Date();
   wunschtermin.min = new Date(heute.getTime() - heute.getTimezoneOffset() * 60000).toISOString().slice(0, 10);

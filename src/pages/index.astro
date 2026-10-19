@@ -1,5 +1,4 @@
 ---
-import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Button from '../components/Button.astro';
 import SectionLabel from '../components/SectionLabel.astro';
@@ -9,13 +8,9 @@ import StepList from '../components/StepList.astro';
 import FaqItem from '../components/FaqItem.astro';
 import CtaBand from '../components/CtaBand.astro';
 import faq from '../data/faq.json';
-import preise from '../data/preise.json';
 import site from '../data/site.json';
-import { mockups, galerie } from '../data/mockups';
 import { organisation, website } from '../lib/schema';
 import { shy } from '../lib/text';
-
-const insta = preise.codes.INSTA50;
 
 const schritte = [
   { titel: 'Preis berechnen.', text: 'Menge, Farbe und Druck eingeben, Preis sofort sehen.' },
@@ -51,20 +46,6 @@ const gruende = ['Fairer Preis', 'Ein Ansprechpartner', ...(site.einzelzahlung_u
           <Button href="/preis-berechnen/" variante="auf-rot">Preis berechnen</Button>
           <a class="pfeil-link hero__link" href="/so-laeufts/">So läuft's</a>
         </div>
-        <p class="hero__code">
-          Mit dem Code <span class="hero__code-wert">INSTA50</span> spart ihr {insta.rabatt_eur} € ab {insta.ab_menge} Hoodies.
-        </p>
-      </div>
-      <div class="hero__bild">
-        <Picture
-          src={mockups.schwarzRuecken.bild}
-          alt={mockups.schwarzRuecken.alt}
-          formats={['avif', 'webp']}
-          widths={[320, 480, 640, 780]}
-          sizes="(min-width: 960px) 420px, (min-width: 600px) 60vw, 82vw"
-          loading="eager"
-          fetchpriority="high"
-        />
       </div>
     </div>
   </section>
@@ -94,38 +75,11 @@ const gruende = ['Fairer Preis', 'Ein Ansprechpartner', ...(site.einzelzahlung_u
     </div>
   </section>
 
-  <!-- 03 · Beispiele -->
-  <section class="abschnitt abschnitt--papier" aria-labelledby="beispiele-titel">
-    <div class="container">
-      <div class="abschnitt__kopf">
-        <SectionLabel nummer="03" text="Beispiele" />
-        <h2 id="beispiele-titel">
-          {shy('Abschlusspullover')}, die so aussehen wie <Rotstift typ="kringel">ihr</Rotstift>
-        </h2>
-      </div>
-      <ul role="list" class="galerie">
-        {
-          galerie.map((m) => (
-            <li class="galerie__kachel">
-              <Picture
-                src={m.bild}
-                alt={m.alt}
-                formats={['avif', 'webp']}
-                widths={[240, 360, 520]}
-                sizes="(min-width: 960px) 360px, 45vw"
-              />
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  <!-- 04 · Warum ABSOLVO -->
+  <!-- 03 · Warum ABSOLVO -->
   <section class="abschnitt abschnitt--papier-2" aria-labelledby="warum-titel">
     <div class="container warum">
       <div class="abschnitt__kopf">
-        <SectionLabel nummer="04" text="Warum ABSOLVO" />
+        <SectionLabel nummer="03" text="Warum ABSOLVO" />
         <h2 id="warum-titel">Warum <Rotstift typ="unterstreichung">ABSOLVO</Rotstift>?</h2>
       </div>
       <div class="warum__raster">
@@ -147,11 +101,11 @@ const gruende = ['Fairer Preis', 'Ein Ansprechpartner', ...(site.einzelzahlung_u
     </div>
   </section>
 
-  <!-- 05 · FAQ -->
+  <!-- 04 · FAQ -->
   <section class="abschnitt abschnitt--papier" aria-labelledby="faq-titel">
     <div class="container faq-kurz">
       <div class="abschnitt__kopf">
-        <SectionLabel nummer="05" text="FAQ" />
+        <SectionLabel nummer="04" text="FAQ" />
         <h2 id="faq-titel">Häufige Fragen</h2>
       </div>
       <div>
@@ -197,85 +151,6 @@ const gruende = ['Fairer Preis', 'Ein Ansprechpartner', ...(site.einzelzahlung_u
     padding: 12px 4px;
     font-size: 1.1875rem;
     font-weight: 800;
-  }
-
-  .hero__code {
-    padding: 14px 18px;
-    background: var(--papier);
-    color: var(--tinte);
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 500;
-    line-height: 1.4;
-    transform: rotate(-1.2deg);
-  }
-
-  .hero__code-wert {
-    padding: 2px 8px;
-    margin-inline: 2px;
-    border: 2px dashed var(--tinte);
-    border-radius: 6px;
-    font-family: var(--font-mono);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-  }
-
-  .hero__bild {
-    justify-self: center;
-    width: min(82vw, 420px);
-    margin-top: 8px;
-  }
-
-  .hero__bild :global(img) {
-    width: 100%;
-  }
-
-  @media (min-width: 960px) {
-    .hero__raster {
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-      column-gap: 48px;
-      row-gap: 40px;
-    }
-
-    .hero__kopf {
-      grid-column: 1 / -1;
-    }
-
-    .hero__text {
-      align-content: start;
-    }
-
-    .hero__bild {
-      justify-self: end;
-      align-self: start;
-      width: min(100%, 440px);
-      margin-top: 0;
-    }
-  }
-
-  /* ---------- Galerie ---------- */
-  .galerie {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .galerie__kachel {
-    padding: clamp(12px, 2.5vw, 32px);
-    background: var(--papier-2);
-    border-radius: var(--radius);
-  }
-
-  .galerie__kachel :global(img) {
-    width: 100%;
-  }
-
-  @media (min-width: 960px) {
-    .galerie {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 20px;
-    }
   }
 
   /* ---------- Warum ---------- */

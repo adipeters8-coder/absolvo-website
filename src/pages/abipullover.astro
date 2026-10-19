@@ -1,12 +1,10 @@
 ---
-import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import SectionLabel from '../components/SectionLabel.astro';
 import Rotstift from '../components/Rotstift.astro';
 import FuerWen from '../components/FuerWen.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { mockups } from '../data/mockups';
 import { produkt } from '../lib/schema';
 import { shy } from '../lib/text';
 
@@ -21,7 +19,7 @@ const merkmale = ['Motto vorne', 'Namensliste hinten', 'Name auf dem Ärmel', 'E
   jsonLd={[produkt(description)]}
   breadcrumb={[{ name: 'Abipullover', pfad: '/abipullover/' }]}
 >
-  <PageHero label="Abi und Fachabi" schulform="abi" buttons teaser>
+  <PageHero label="Abi und Fachabi" buttons teaser>
     <Fragment slot="titel">
       {shy('Abipullover')} für euren <span class="nowrap">Jahrgang.<Rotstift typ="haken" farbe="tinte" animiert /></span>
     </Fragment>
@@ -32,72 +30,42 @@ const merkmale = ['Motto vorne', 'Namensliste hinten', 'Name auf dem Ärmel', 'E
   </PageHero>
 
   <section class="abschnitt abschnitt--papier" aria-labelledby="drauf-titel">
-    <div class="container zweispaltig">
-      <div class="zweispaltig__text">
+    <div class="container">
+      <div class="abschnitt__kopf">
         <SectionLabel nummer="01" text="Druck" />
         <h2 id="drauf-titel">Was auf euren {shy('Abipullover')} <Rotstift typ="unterstreichung">kann</Rotstift></h2>
-        <ul role="list" class="merkmale">
-          {
-            merkmale.map((m, i) => (
-              <li>
-                <span class="label">{String(i + 1).padStart(2, '0')}</span>
-                <span>{m}</span>
-              </li>
-            ))
-          }
-        </ul>
       </div>
-      <div class="bildpaar">
-        <div class="bildkachel">
-          <Picture
-            src={mockups.schwarzVorne.bild}
-            alt={mockups.schwarzVorne.alt}
-            formats={['avif', 'webp']}
-            widths={[240, 360, 520]}
-            sizes="(min-width: 960px) 260px, 44vw"
-          />
-        </div>
-        <div class="bildkachel">
-          <Picture
-            src={mockups.schwarzRuecken.bild}
-            alt={mockups.schwarzRuecken.alt}
-            formats={['avif', 'webp']}
-            widths={[240, 360, 520]}
-            sizes="(min-width: 960px) 260px, 44vw"
-          />
-        </div>
-      </div>
+      <ul role="list" class="merkmale">
+        {
+          merkmale.map((m, i) => (
+            <li>
+              <span class="label">{String(i + 1).padStart(2, '0')}</span>
+              <span>{m}</span>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 
   <section class="abschnitt abschnitt--tinte" aria-labelledby="motto-titel">
-    <div class="container zweispaltig zweispaltig--bild-links">
-      <div class="zweispaltig__text">
+    <div class="container">
+      <div class="abschnitt__kopf">
         <SectionLabel nummer="02" text="Motto" />
         <h2 id="motto-titel">Noch kein Abi-Motto?</h2>
-        <p class="lead">Schreibt mir eure Ideen, ich mache daraus ein Motiv.</p>
       </div>
-      <div class="bildkachel bild-schmal">
-        <Picture
-          src={mockups.grauVorne.bild}
-          alt={mockups.grauVorne.alt}
-          formats={['avif', 'webp']}
-          widths={[280, 420, 560]}
-          sizes="(min-width: 960px) 420px, 80vw"
-        />
-      </div>
+      <p class="lead">Schreibt mir eure Ideen, ich mache daraus ein Motiv.</p>
     </div>
   </section>
 
   <FuerWen nummer="03" ausser="/abipullover/" />
 
-  <CtaBand schulform="abi" />
+  <CtaBand />
 </Base>
 
 <style>
   .merkmale {
-    width: 100%;
-    margin-top: 8px;
+    display: grid;
     border-top: 1px solid var(--linie);
   }
 
@@ -105,7 +73,7 @@ const merkmale = ['Motto vorne', 'Namensliste hinten', 'Name auf dem Ärmel', 'E
     display: flex;
     align-items: baseline;
     gap: 20px;
-    padding-block: 18px;
+    padding-block: 22px;
     border-bottom: 1px solid var(--linie);
     font-size: var(--fs-h3);
     font-weight: 800;
@@ -113,9 +81,10 @@ const merkmale = ['Motto vorne', 'Namensliste hinten', 'Name auf dem Ärmel', 'E
     line-height: 1.1;
   }
 
-  .bild-schmal {
-    width: 100%;
-    max-width: 460px;
-    justify-self: center;
+  @media (min-width: 860px) {
+    .merkmale {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 48px;
+    }
   }
 </style>

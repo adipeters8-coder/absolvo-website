@@ -7,12 +7,10 @@ import PriceTeaser from './PriceTeaser.astro';
 interface Props {
   label: string;
   variante?: 'rot' | 'papier';
-  schulform?: 'abi' | 'realschule' | 'berufskolleg';
   buttons?: boolean;
   teaser?: boolean;
 }
-const { label, variante = 'rot', schulform, buttons = false, teaser = false } = Astro.props;
-const rechnerHref = schulform ? `/preis-berechnen/?schulform=${schulform}` : '/preis-berechnen/';
+const { label, variante = 'rot', buttons = false, teaser = false } = Astro.props;
 const hatText = Astro.slots.has('default') || buttons;
 const hatAside = teaser || Astro.slots.has('aside');
 ---
@@ -32,7 +30,7 @@ const hatAside = teaser || Astro.slots.has('aside');
           <slot />
           {buttons && (
             <div class="btn-reihe">
-              <Button href={rechnerHref} variante={variante === 'rot' ? 'auf-rot' : 'primaer'}>
+              <Button href="/preis-berechnen/" variante={variante === 'rot' ? 'auf-rot' : 'primaer'}>
                 Preis berechnen
               </Button>
               <a class="pfeil-link seitenkopf__link" href="/so-laeufts/">
@@ -46,7 +44,7 @@ const hatAside = teaser || Astro.slots.has('aside');
     {
       teaser && (
         <div class="seitenkopf__aside">
-          <PriceTeaser schulform={schulform} />
+          <PriceTeaser />
         </div>
       )
     }

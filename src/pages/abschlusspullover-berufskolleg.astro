@@ -1,5 +1,4 @@
 ---
-import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import SectionLabel from '../components/SectionLabel.astro';
@@ -7,7 +6,6 @@ import Rotstift from '../components/Rotstift.astro';
 import Button from '../components/Button.astro';
 import FuerWen from '../components/FuerWen.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { mockups } from '../data/mockups';
 import { produkt } from '../lib/schema';
 import { shy } from '../lib/text';
 
@@ -21,7 +19,7 @@ const description =
   jsonLd={[produkt(description)]}
   breadcrumb={[{ name: 'Abschlusspullover Berufskolleg', pfad: '/abschlusspullover-berufskolleg/' }]}
 >
-  <PageHero label="Berufskolleg und Ausbildung" schulform="berufskolleg" buttons teaser>
+  <PageHero label="Berufskolleg und Ausbildung" buttons teaser>
     <Fragment slot="titel">
       {shy('Abschlusspullover')} fürs <Rotstift typ="unterstreichung" farbe="tinte">Berufskolleg.</Rotstift>
     </Fragment>
@@ -31,34 +29,18 @@ const description =
   </PageHero>
 
   <section class="abschnitt abschnitt--tinte" aria-labelledby="betriebe-titel">
-    <div class="container zweispaltig">
+    <div class="container">
       <div class="zweispaltig__text">
         <SectionLabel nummer="01" text="Ausbildungsbetriebe" />
         <h2 id="betriebe-titel">{shy('Auch für Ausbildungsbetriebe.')}</h2>
         <p class="lead">Ihr wollt eurem Azubi-Jahrgang zum Abschluss etwas mitgeben? Fragt einfach an.</p>
-        <Button href="/preis-berechnen/?schulform=berufskolleg" variante="sekundaer-hell">Preis berechnen</Button>
-      </div>
-      <div class="bildkachel bild-schmal">
-        <Picture
-          src={mockups.hellgrauRuecken.bild}
-          alt={mockups.hellgrauRuecken.alt}
-          formats={['avif', 'webp']}
-          widths={[280, 420, 560]}
-          sizes="(min-width: 960px) 420px, 80vw"
-        />
+        <Button href="/preis-berechnen/" variante="sekundaer-hell">Preis berechnen</Button>
       </div>
     </div>
   </section>
 
   <FuerWen nummer="02" ausser="/abschlusspullover-berufskolleg/" />
 
-  <CtaBand schulform="berufskolleg" />
+  <CtaBand />
 </Base>
 
-<style>
-  .bild-schmal {
-    width: 100%;
-    max-width: 460px;
-    justify-self: center;
-  }
-</style>
