@@ -18,6 +18,11 @@ const FEHLERTEXTE: Record<string, string> = {
   FI_SCHEMA_FORMAT_EMAIL: 'Die E-Mail-Adresse sieht nicht ganz richtig aus. Schaut sie euch bitte noch mal an.',
   TOO_MANY_REQUESTS: 'Das ging gerade etwas schnell hintereinander. Wartet ein paar Sekunden und schickt die Anfrage dann noch mal ab.',
 };
+// Anreiz erst kurz vor der nächsten Stufe zeigen: höchstens 5 Hoodies oder 10 % der Stufe entfernt
+const anreizSchwelle = (stufeAb: number) => Math.max(5, Math.ceil(stufeAb * 0.1));
+const prozent = new Intl.NumberFormat('de-DE', { style: 'percent', maximumFractionDigits: 0 });
+const hoodies = (n: number) => `${n} ${n === 1 ? 'Hoodie' : 'Hoodies'}`;
+
 const megabyte = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 });
 const alsMB = (bytes: number) => `${megabyte.format(bytes / 1000 / 1000)} MB`;
 
@@ -48,6 +53,9 @@ function start() {
   const absenden = $<HTMLButtonElement>('[data-absenden]');
   const fehlerText = $<HTMLElement>('[data-fehler-text]');
   const fehler = $<HTMLElement>('[data-fehler]');
+  const anstupser = $<HTMLElement>('[data-anstupser]');
+  const anstupserText = $<HTMLElement>('[data-anstupser-text]');
+  const anstupserBtn = $<HTMLButtonElement>('[data-anstupser-btn]');
   const dateien = $<HTMLInputElement>('[data-dateien]');
   const dateienStatus = $<HTMLElement>('[data-dateien-status]');
 
@@ -59,6 +67,85 @@ function start() {
   const feld = (schluessel: string, wert: string) => {
     $<HTMLInputElement>(`[data-feld="${schluessel}"]`).value = wert;
   };
+
+  // Preise zählen kurz hoch oder runter statt zu springen (ohne Animation bei „weniger Bewegung“)
+  const bewegungErlaubt = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const zaehlen = (schluessel: string, zielCent: number | null) => {
+    for (const el of $$<HTMLElement>(`[data-ausgabe="${schluessel}"]`)) {
+      const vorher = el.dataset.cent;
+      const startCent = Number(vorher);
+      el.dataset.cent = zielCent === null ? '' : String(zielCent);
+      if (zielCent === null) {
+        el.textContent = '–';
+        continue;
+      }
+      // Ohne vorherigen Preis (Start oder unter Mindestmenge) direkt anzeigen
+      if (!bewegungErlaubt || !vorher || !Number.isFinite(startCent) || startCent === zielCent) {
+        el.textContent = formatEuro(zielCent);
+        continue;
+      }
+      const t0 = performance.now();
+      const schritt = (jetzt: number) => {
+        if (el.dataset.cent !== String(zielCent)) return; // neues Ziel, diese Animation endet
+        const p = Math.min(1, (jetzt - t0) / 320);
+        const weich = 1 - (1 - p) ** 3;
+        el.textContent = formatEuro(Math.round(startCent + (zielCent - startCent) * weich));
+        if (p < 1) requestAnimationFrame(schritt);
+      };
+      requestAnimationFrame(schritt);
+      // Absicherung, falls requestAnimationFrame pausiert (z. B. Tab im Hintergrund)
+      window.setTimeout(() => {
+        if (el.dataset.cent === String(zielCent)) el.textContent = formatEuro(zielCent);
+      }, 400);
+    }
+  };
+
+  const hupfen = () => {
+    if (!bewegungErlaubt) return;
+    for (const el of $$<HTMLElement>('[data-ausgabe="pro-hoodie"]')) {
+      el.classList.remove('ist-guenstiger');
+      void el.offsetWidth; // Animation neu starten
+      el.classList.add('ist-guenstiger');
+    }
+  };
+
+  // Anreiz unter der Menge: nur kurz vor der nächsten Stufe
+  const zeigeAnstupser = (e: Ergebnis) => {
+    const stufe = e.naechsteStufe;
+    const fehlen = stufe ? stufe.ab - e.menge : 0;
+    if (!stufe || e.menge < 1 || fehlen < 1 || fehlen > anreizSchwelle(stufe.ab)) {
+      anstupser.hidden = true;
+      anstupser.classList.remove('ist-neu');
+      return false;
+    }
+    if (e.unterMindestmenge || e.stueckCent === null) {
+      anstupserText.innerHTML = `Fast geschafft. Noch <strong>${hoodies(fehlen)}</strong>, dann seid ihr bei ${stufe.ab} Stück und es geht los.`;
+    } else {
+      const sparCent = e.stueckCent - stufe.stueckCent;
+      anstupserText.innerHTML =
+        `Fast geschafft. Mit <strong>${hoodies(fehlen)} mehr</strong> zahlt ihr nur ${formatEuro(stufe.stueckCent)} pro Stück. ` +
+        `Das sind <strong>${formatEuro(sparCent)} (${prozent.format(sparCent / e.stueckCent)}) weniger</strong> pro Hoodie.`;
+    }
+    anstupserBtn.textContent = `+${hoodies(fehlen)}`;
+    anstupserBtn.dataset.ziel = String(stufe.ab);
+    if (anstupser.hidden) {
+      anstupser.hidden = false;
+      anstupser.classList.remove('ist-neu');
+      void anstupser.offsetWidth;
+      anstupser.classList.add('ist-neu');
+    }
+    return true;
+  };
+
+  anstupserBtn.addEventListener('click', () => {
+    const ziel = Number(anstupserBtn.dataset.ziel);
+    if (!ziel) return;
+    anzahl.value = String(ziel);
+    aktualisieren();
+    anzahl.focus();
+  });
+
+  let letzteBasis: number | null = null;
 
   regler.hidden = false;
   live.hidden = false;
@@ -110,16 +197,22 @@ function start() {
     leisteGesamt.hidden = e.unterMindestmenge;
     leisteMindest.hidden = !e.unterMindestmenge;
 
-    if (e.naechsteStufe) {
+    // Kurz vor der nächsten Stufe übernimmt der animierte Anreiz, sonst der kleine Hinweis in der Ergebnis-Karte
+    const nah = zeigeAnstupser(e);
+    if (e.naechsteStufe && !nah) {
       anreiz.textContent = `Bei ${e.naechsteStufe.ab} Hoodies zahlt ihr nur ${formatEuro(e.naechsteStufe.stueckCent)} pro Stück.`;
       anreiz.hidden = false;
     } else {
       anreiz.hidden = true;
     }
 
+    // Neue, günstigere Preisstufe erreicht: Preis kurz hüpfen lassen
+    if (letzteBasis !== null && e.basisCent !== null && e.basisCent < letzteBasis) hupfen();
+    letzteBasis = e.basisCent;
+
     if (e.proHoodieCent === null || e.gesamtCent === null || e.basisCent === null) {
-      ausgeben('pro-hoodie', '–');
-      ausgeben('gesamt', '–');
+      zaehlen('pro-hoodie', null);
+      zaehlen('gesamt', null);
       zeileErsparnis.hidden = true;
       feld('pro-hoodie', `unter Mindestmenge (${preise.mindestmenge})`);
       feld('gesamt', `unter Mindestmenge (${preise.mindestmenge})`);
@@ -131,8 +224,8 @@ function start() {
 
     const proHoodie = formatEuro(e.proHoodieCent);
     const gesamt = formatEuro(e.gesamtCent);
-    ausgeben('pro-hoodie', proHoodie);
-    ausgeben('gesamt', gesamt);
+    zaehlen('pro-hoodie', e.proHoodieCent);
+    zaehlen('gesamt', e.gesamtCent);
     zeileErsparnis.hidden = e.rabattCent === 0;
     ausgeben('ersparnis', `−${formatEuro(e.rabattCent)}`);
 

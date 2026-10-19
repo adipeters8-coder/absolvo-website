@@ -74,6 +74,11 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
           required
         />
       </div>
+      <!-- Anreiz kurz vor der nächsten Preisstufe, wird per JavaScript eingeblendet -->
+      <div class="anstupser" data-anstupser hidden>
+        <p class="anstupser__text" data-anstupser-text aria-live="polite"></p>
+        <button type="button" class="anstupser__btn" data-anstupser-btn></button>
+      </div>
     </div>
 
     <div class="feld">
@@ -225,6 +230,9 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
       </div>
 
       <p class="ergebnis__hinweis">{preise.hinweis}</p>
+      <p class="ergebnis__locker">
+        Die Anfrage ist unverbindlich. Ihr bestellt damit noch nichts, ich schicke euch erst mal ein Angebot.
+      </p>
       <a class="btn ergebnis__cta" href="#kontakt">Zur Anfrage</a>
     </div>
     <p class="visually-hidden" aria-live="polite" data-ansage></p>
@@ -262,7 +270,7 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
     <label class="einwilligung">
       <input type="checkbox" name="fi-text-datenschutz" value="zugestimmt" required />
       <span>
-        Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Anfrage verwendet werden. Mehr dazu in der
+        Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Anfrage verwendet werden. Mehr dazu in der{' '}
         <a href="/datenschutz/">{shy('Datenschutzerklärung')}</a>.
       </span>
     </label>
@@ -278,9 +286,10 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
     <input type="hidden" name="fi-text-ersparnis_code" value="0" data-feld="ersparnis" />
 
     <div class="absenden">
-      <button class="btn" type="submit" data-absenden>Anfrage abschicken</button>
+      <button class="btn" type="submit" data-absenden>Unverbindlich anfragen</button>
+      <p class="absenden__hinweis">Ganz locker: Die Anfrage ist unverbindlich, ihr bestellt damit noch nichts.</p>
       <p class="fehler" role="alert" data-fehler hidden>
-        <span data-fehler-text>Das hat leider nicht geklappt.</span> Schreibt mir sonst einfach direkt an
+        <span data-fehler-text>Das hat leider nicht geklappt.</span> Schreibt mir sonst einfach direkt an{' '}
         <a href={mailHref}>{site.mail.anzeige}</a>.
       </p>
     </div>
@@ -750,6 +759,135 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
   .ergebnis__statisch {
     --tabelle-linie: var(--tinte-2);
     --tabelle-kopf: var(--papier-gedimmt);
+  }
+
+  .ergebnis__locker {
+    display: flex;
+    gap: 10px;
+    padding-top: 14px;
+    border-top: 1px solid var(--tinte-2);
+    font-size: var(--fs-klein);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .ergebnis__locker::before {
+    content: '';
+    flex: none;
+    width: 6px;
+    height: 11px;
+    margin: 3px 4px 0 3px;
+    border-right: 2px solid var(--rot-auf-tinte);
+    border-bottom: 2px solid var(--rot-auf-tinte);
+    transform: rotate(45deg);
+  }
+
+  .absenden__hinweis {
+    font-size: var(--fs-klein);
+    color: var(--tinte-2);
+  }
+
+  /* ---------- Anreiz vor der nächsten Preisstufe ---------- */
+  .anstupser {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    margin-top: 16px;
+    padding: 14px 14px 14px 18px;
+    background: var(--rot-flaeche);
+    border-radius: var(--radius-mittel);
+  }
+
+  .anstupser__text {
+    flex: 1 1 220px;
+    font-size: var(--fs-klein);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .anstupser__text strong {
+    font-weight: 800;
+  }
+
+  .anstupser__btn {
+    flex: none;
+    min-height: 44px;
+    padding: 10px 18px;
+    background: var(--rot-dunkel);
+    color: var(--papier);
+    border: 0;
+    border-radius: var(--radius-pille);
+    font-size: 0.9375rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .anstupser__btn:hover {
+    background: var(--tinte);
+  }
+
+  .anstupser__btn:focus-visible {
+    outline: 3px solid var(--tinte);
+    outline-offset: 3px;
+  }
+
+  .anstupser.ist-neu {
+    animation: anstupser-rein 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+  }
+
+  .anstupser.ist-neu .anstupser__btn {
+    animation: anstupser-puls 1.6s ease-in-out 0.5s 2;
+  }
+
+  @keyframes anstupser-rein {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.97);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes anstupser-puls {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(201 31 36 / 0.4);
+    }
+
+    50% {
+      box-shadow: 0 0 0 9px rgb(201 31 36 / 0);
+    }
+  }
+
+  /* Preis wird günstiger: kurzer Hüpfer */
+  .ergebnis__preis,
+  .preisleiste strong {
+    display: inline-block;
+    transform-origin: left center;
+  }
+
+  .ist-guenstiger {
+    animation: preis-runter 0.7s ease both;
+  }
+
+  @keyframes preis-runter {
+    0% {
+      transform: scale(1);
+    }
+
+    30% {
+      transform: scale(1.08);
+      color: var(--rot-auf-tinte);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
 
   .ergebnis__hinweis {

@@ -96,7 +96,7 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
         <SectionLabel nummer="03" text="Preisrechner" />
         <h2 id="rechner-titel">{shy('Was kostet euer Abschlusspullover?')}</h2>
         <p class="abschnitt__intro">
-          Gebt ein, was ihr euch vorstellt. Der Preis passt sich sofort an. Danach schickt ihr die Anfrage ab und ich
+          Gebt ein, was ihr euch vorstellt. Der Preis passt sich sofort an. Danach schickt ihr die Anfrage unverbindlich ab und ich
           melde mich bei euch.
         </p>
       </div>
@@ -108,14 +108,16 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
   <section class="abschnitt abschnitt--papier" aria-labelledby="warum-titel">
     <div class="container ueber-mich">
       <figure class="ueber-mich__bild">
-        <Picture
-          src={adrianFoto}
-          alt="Adrian Peters, Gründer von ABSOLVO"
-          formats={['avif', 'webp']}
-          widths={[320, 480, 680]}
-          sizes="(min-width: 960px) 440px, 80vw"
-          class="foto"
-        />
+        <div class="ueber-mich__foto">
+          <Picture
+            src={adrianFoto}
+            alt="Adrian Peters, Gründer von ABSOLVO"
+            formats={['avif', 'webp']}
+            widths={[320, 480, 640, 796]}
+            sizes="(min-width: 960px) 440px, 84vw"
+            class="foto"
+          />
+        </div>
         <figcaption class="label">Adrian, Gründer und einziger Ansprechpartner</figcaption>
       </figure>
       <div class="ueber-mich__text">
@@ -141,15 +143,8 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
             Doktorhut-Clipart.
           </p>
         </div>
-        <ul role="list" class="warum__karten">
-          {
-            gruende.map((g, i) => (
-              <li class="karte warum__karte">
-                <span class="label">{String(i + 1).padStart(2, '0')}</span>
-                <h3>{g}</h3>
-              </li>
-            ))
-          }
+        <ul role="list" class="warum__punkte">
+          {gruende.map((g) => <li>{g}</li>)}
         </ul>
         <a class="pfeil-link" href="/ueber-absolvo/">Mehr über Adrian und ABSOLVO</a>
       </div>
@@ -159,15 +154,15 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
   <!-- 05 · FAQ -->
   <section class="abschnitt abschnitt--papier-2 faq-abschnitt" aria-labelledby="faq-titel">
     <div class="container">
-      <div class="abschnitt__kopf abschnitt__kopf--link">
-        <div class="abschnitt__kopf-text">
-          <SectionLabel nummer="05" text="FAQ" />
-          <h2 id="faq-titel">Häufige Fragen</h2>
-        </div>
-        <a class="pfeil-link" href="/faq/">Alle Fragen zu Abschlusspullovern</a>
+      <div class="abschnitt__kopf">
+        <SectionLabel nummer="05" text="FAQ" />
+        <h2 id="faq-titel">Häufige Fragen</h2>
       </div>
       <div class="faq-kurz">
         {faq.slice(0, 4).map((f) => <FaqItem frage={f.frage} antwort={f.antwort} />)}
+      </div>
+      <div class="abschnitt__fuss faq-fuss">
+        <a class="pfeil-link" href="/faq/">Alle Fragen zu Abschlusspullovern</a>
       </div>
     </div>
   </section>
@@ -277,25 +272,30 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
     gap: 40px;
   }
 
-  /* Freigestelltes Foto in einer großen, schattenlosen Karte (DESIGN.md „Feature Media Card“) */
+  /* Freigestelltes Foto in einer großen, schattenlosen Karte (DESIGN.md „Feature Media Card“).
+     Auf dem Desktop so hoch wie die Textspalte, das Foto füllt die Höhe und steht unten. */
   .ueber-mich__bild {
     display: grid;
-    align-content: end;
-    justify-items: center;
-    gap: 0;
+    grid-template-rows: 1fr auto;
     overflow: hidden;
     padding-top: 32px;
     background: var(--papier-2);
     border-radius: var(--radius);
   }
 
-  /* Bis etwa zur Hüfte zeigen, unten läuft das Foto aus der Karte */
-  .ueber-mich__bild :global(img) {
-    width: min(78%, 360px);
-    height: auto;
-    aspect-ratio: 0.72;
-    object-fit: cover;
-    object-position: top;
+  .ueber-mich__foto {
+    position: relative;
+    min-height: 440px;
+  }
+
+  .ueber-mich__foto :global(img) {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: auto;
+    max-width: none;
+    height: 100%;
+    transform: translateX(-50%);
   }
 
   .ueber-mich__bild figcaption {
@@ -322,34 +322,48 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
     line-height: 1.4;
   }
 
-  .warum__karten {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-    width: 100%;
+  /* Kompakte Punkte statt großer Karten */
+  .warum__punkte {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
-  .warum__karte {
-    display: grid;
-    gap: 20px;
-    padding: 24px;
+  .warum__punkte li {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px 10px 14px;
+    background: var(--papier-2);
+    border-radius: var(--radius-pille);
+    font-size: 1.0625rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
   }
 
-  .warum__karte h3 {
-    font-size: var(--fs-h3);
+  /* kleiner Haken in Tinte, per CSS gezeichnet */
+  .warum__punkte li::before {
+    content: '';
+    width: 7px;
+    height: 13px;
+    margin: -3px 2px 0 4px;
+    border-right: 2.5px solid var(--tinte);
+    border-bottom: 2.5px solid var(--tinte);
+    transform: rotate(45deg);
   }
 
   @media (min-width: 960px) {
     .ueber-mich {
       grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
       gap: clamp(48px, 6vw, 88px);
-      align-items: start;
+      align-items: stretch;
     }
   }
 
   /* ---------- FAQ ---------- */
-  .faq-kurz {
-    max-width: 52rem;
+  .faq-fuss {
+    display: flex;
+    justify-content: flex-end;
   }
 
   .faq-abschnitt {

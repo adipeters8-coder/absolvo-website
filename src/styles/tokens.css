@@ -14,6 +14,7 @@
   --rot-text: var(--rot-dunkel);   /* kleine rote Schrift auf Papier/Papier-2 (5,0:1 / 4,6:1) */
   --rot-auf-tinte: #FF5A5F;        /* kleine rote Schrift auf Tinte (5,8:1) */
   --papier-gedimmt: #BDB8AE;       /* Nebentext auf Tinte */
+  --rot-flaeche: #FBE4E1;          /* zarte Rotfläche für Hinweise, Text darauf in Tinte */
 
   /* Schriften */
   --font-text: 'Inter Tight Variable', 'Inter Tight Fallback', system-ui, sans-serif;

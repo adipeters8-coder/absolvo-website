@@ -13,7 +13,7 @@ const { href = '/preis-berechnen/' } = Astro.props;
   <div class="container cta-band__innen">
     <h2 id="cta-titel">Euer Jahrgang ist dran?</h2>
     <div class="cta-band__rechts">
-      <p class="lead">Rechnet euren Preis in einer Minute aus und schickt die Anfrage direkt ab.</p>
+      <p class="lead">Rechnet euren Preis in einer Minute aus und schickt die Anfrage unverbindlich ab.</p>
       <Button href={href} variante="auf-rot">Preis berechnen</Button>
     </div>
   </div>
@@ -33,14 +33,19 @@ const { href = '/preis-berechnen/' } = Astro.props;
     display: grid;
     gap: 28px;
     justify-items: start;
-    align-content: end;
+    align-content: start;
   }
 
+  /* Überschrift und rechter Teil beginnen auf gleicher Höhe */
   @media (min-width: 960px) {
     .cta-band__innen {
       grid-template-columns: 1.2fr 1fr;
-      align-items: end;
+      align-items: start;
       gap: 48px;
+    }
+
+    .cta-band__rechts {
+      padding-top: 0.35em;
     }
   }
 </style>
