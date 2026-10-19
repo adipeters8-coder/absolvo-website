@@ -21,7 +21,7 @@
 
   /* Typo-Skala, mobil bis Desktop */
   --fs-h1: clamp(3rem, 1.25rem + 7.4vw, 7.5rem);         /* 48 bis 120 px */
-  --fs-h2: clamp(2.25rem, 1.1rem + 4.9vw, 4.5rem);       /* 36 bis 72 px */
+  --fs-h2: clamp(2.25rem, 1.4rem + 3.4vw, 4rem);         /* 36 bis 64 px, ruhiger nach DESIGN.md */
   --fs-h3: clamp(1.5rem, 1.25rem + 1.1vw, 2rem);         /* 24 bis 32 px */
   --fs-text: clamp(1.125rem, 1.05rem + 0.3vw, 1.25rem);  /* 18 bis 20 px */
   --fs-lead: clamp(1.5rem, 1.3rem + 0.9vw, 1.875rem);    /* 24 bis 30 px, Fließtext auf Rot */
@@ -31,9 +31,15 @@
   /* Layout */
   --max: 1200px;
   --rand: 20px;
-  --abschnitt: clamp(4rem, 2.5rem + 6vw, 8.5rem);
-  --radius: 16px;
+  --abschnitt: clamp(4rem, 2.8rem + 4.5vw, 7rem);       /* 64 bis 112 px */
+  --radius: 28px;          /* große Karten und Flächen (DESIGN.md) */
+  --radius-mittel: 20px;   /* Menüs, kleinere Karten */
+  --radius-feld: 14px;     /* Eingabefelder */
   --radius-pille: 999px;
+
+  /* Sticky-Header */
+  --kopf-hoehe: 64px;
+  --papier-glas: rgb(244 241 234 / 0.82);
 
   /* Fokus */
   --fokus: var(--tinte);

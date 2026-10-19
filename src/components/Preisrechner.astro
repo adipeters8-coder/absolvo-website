@@ -1,0 +1,923 @@
+---
+// Preisrechner mit Anfrageformular (Briefing Abschnitt 6). Wird auf / und /preis-berechnen/ genutzt.
+import Preistabelle from './Preistabelle.astro';
+import preise from '../data/preise.json';
+import farbwerte from '../data/farbwerte.json';
+import site from '../data/site.json';
+import { cent, formatEuro } from '../lib/preis';
+import { shy } from '../lib/text';
+
+interface Props {
+  /** Überschrift „Kontakt“: h2 auf /preis-berechnen/, h3 auf der Startseite (dort steht schon eine H2 drüber) */
+  kontaktEbene?: 'h2' | 'h3';
+}
+const { kontaktEbene = 'h2' } = Astro.props;
+const KontaktTitel = kontaktEbene;
+
+// Forminit: Die Form-ID steht in site.json (sie ist öffentlich und kein Geheimnis).
+// Forminit speichert nur Felder mit Namen nach dem Muster fi-{typ}-{name}.
+const forminitId = site.forminit_id?.trim();
+const action = `https://forminit.com/f/${forminitId || 'FORMINIT_ID_FEHLT'}`;
+
+const a = preise.aufpreise_pro_stueck;
+const plus = (eur: number) => `+${formatEuro(cent(eur))}`;
+const farbwert = (name: string) => (farbwerte as Record<string, string>)[name] ?? '#B5B2AB';
+const reglerMax = Math.max(150, Math.max(...preise.staffel_basis.map((s) => s.ab)) + 50);
+const startMenge = 30;
+
+const druckVorne = [
+  { wert: '1 Farbe', farben: 1, aufpreis: null },
+  { wert: '2 Farben', farben: 2, aufpreis: plus(a.druck_vorne_2_farben) },
+  { wert: '3 Farben oder mehr', farben: 3, aufpreis: plus(a.druck_vorne_3_farben) },
+];
+const ruecken = [
+  { wert: 'Namensliste 1-farbig', farben: 1, aufpreis: null },
+  { wert: 'Namensliste 2-farbig', farben: 2, aufpreis: plus(a.ruecken_2_farben) },
+];
+const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfrage Abschlusspullover')}`;
+---
+
+<form
+  id="rechner"
+  class="rechner"
+  action={action}
+  method="POST"
+  enctype="multipart/form-data"
+  data-formular={forminitId ? 'ja' : 'nein'}
+>
+  <div class="rechner__konfig">
+    <div class="feld">
+      <label class="feld__titel" for="anzahl">Anzahl Hoodies</label>
+      <div class="menge">
+        <input
+          class="menge__regler"
+          type="range"
+          id="anzahl-regler"
+          min={preise.mindestmenge}
+          max={reglerMax}
+          step="1"
+          value={startMenge}
+          aria-label="Anzahl Hoodies, Regler"
+          hidden
+          data-regler
+        />
+        <input
+          class="eingabe menge__zahl"
+          type="number"
+          id="anzahl"
+          name="fi-number-anzahl"
+          min="1"
+          max="2000"
+          step="1"
+          value={startMenge}
+          inputmode="numeric"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="feld">
+      <label class="feld__titel" for="uebergroessen">
+        Davon Übergrößen 3XL bis 5XL <span class="feld__preis">{plus(a.uebergroesse_3xl_bis_5xl)} pro Stück</span>
+      </label>
+      <input
+        class="eingabe eingabe--kurz"
+        type="number"
+        id="uebergroessen"
+        name="fi-text-uebergroessen"
+        min="0"
+        max={startMenge}
+        step="1"
+        value="0"
+        inputmode="numeric"
+      />
+    </div>
+
+    <fieldset class="feld">
+      <legend class="feld__titel">Hoodie-Farbe</legend>
+      <div class="farben">
+        {
+          preise.farben.map((farbe, i) => (
+            <label class="farbe">
+              <input type="radio" name="fi-text-farbe" value={farbe} checked={i === 0} />
+              <span class="farbe__kachel" style={`--farbe: ${farbwert(farbe)}`} aria-hidden="true" />
+              <span class="farbe__name">{farbe}</span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <fieldset class="feld">
+      <legend class="feld__titel">Druck vorne</legend>
+      <div class="optionen">
+        {
+          druckVorne.map((o, i) => (
+            <label class="option">
+              <input type="radio" name="fi-text-druck_vorne" value={o.wert} data-farben={o.farben} checked={i === 0} />
+              <span class="option__text">
+                {o.wert}
+                {o.aufpreis && <span class="option__preis">{o.aufpreis}</span>}
+              </span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <fieldset class="feld">
+      <legend class="feld__titel">Rücken</legend>
+      <div class="optionen">
+        {
+          ruecken.map((o, i) => (
+            <label class="option">
+              <input type="radio" name="fi-text-ruecken" value={o.wert} data-farben={o.farben} checked={i === 0} />
+              <span class="option__text">
+                {o.wert}
+                {o.aufpreis && <span class="option__preis">{o.aufpreis}</span>}
+              </span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <fieldset class="feld">
+      <legend class="feld__titel">Name auf dem Ärmel</legend>
+      <div class="optionen">
+        <label class="option">
+          <input type="radio" name="fi-text-aermelname" value="Ja" />
+          <span class="option__text">Ja <span class="option__preis">{plus(a.aermelname)}</span></span>
+        </label>
+        <label class="option">
+          <input type="radio" name="fi-text-aermelname" value="Nein" checked />
+          <span class="option__text">Nein</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="feld">
+      <label class="feld__titel" for="design-dateien">
+        Design-Dateien <span class="feld__optional">(optional)</span>
+      </label>
+      <input
+        class="datei"
+        type="file"
+        id="design-dateien"
+        name="fi-file-design[]"
+        multiple
+        accept=".pdf,.png,.jpg,.jpeg,.webp,.heic,.svg,.ai,.eps,.psd,.zip"
+        aria-describedby="design-dateien-hilfe design-dateien-status"
+        data-dateien
+      />
+      <p class="feld__hilfe" id="design-dateien-hilfe">
+        PDF, PNG, JPG, SVG, AI, PSD oder ZIP. Bis zu 10 Dateien, zusammen höchstens 24 MB. Größere Dateien schickt ihr
+        mir einfach per Mail.
+      </p>
+      <p class="datei-status" id="design-dateien-status" aria-live="polite" data-dateien-status></p>
+    </div>
+
+
+    <div class="feld">
+      <label class="feld__titel" for="rabattcode">Rabattcode <span class="feld__optional">(optional)</span></label>
+      <input
+        class="eingabe eingabe--code"
+        type="text"
+        id="rabattcode"
+        name="fi-text-rabattcode"
+        autocomplete="off"
+        autocapitalize="characters"
+        spellcheck="false"
+        aria-describedby="code-status"
+      />
+      <p class="code-status" id="code-status" aria-live="polite" data-code-status></p>
+    </div>
+
+  </div>
+
+  <aside class="rechner__ergebnis" aria-labelledby="ergebnis-titel">
+    <div class="ergebnis">
+      <p class="label" id="ergebnis-titel">Euer Preis</p>
+
+      <div class="ergebnis__live" data-live hidden>
+        <div data-preisblock>
+          <p class="ergebnis__preis" data-ausgabe="pro-hoodie">–</p>
+          <p class="ergebnis__einheit">pro Hoodie</p>
+          <dl class="ergebnis__zeilen">
+            <div>
+              <dt>Gesamtpreis</dt>
+              <dd data-ausgabe="gesamt">–</dd>
+            </div>
+            <div data-zeile-ersparnis hidden>
+              <dt>Ersparnis durch Code</dt>
+              <dd class="ergebnis__ersparnis" data-ausgabe="ersparnis">–</dd>
+            </div>
+          </dl>
+        </div>
+        <p class="ergebnis__mindest" data-mindest hidden>
+          Ab {preise.mindestmenge} Hoodies geht's los. Kleinere Gruppe? Schreibt mir trotzdem.
+        </p>
+        <p class="ergebnis__anreiz" data-anreiz hidden></p>
+      </div>
+
+      <div class="ergebnis__statisch" data-statisch>
+        <Preistabelle kompakt />
+      </div>
+
+      <p class="ergebnis__hinweis">{preise.hinweis}</p>
+      <a class="btn ergebnis__cta" href="#kontakt">Zur Anfrage</a>
+    </div>
+    <p class="visually-hidden" aria-live="polite" data-ansage></p>
+  </aside>
+
+  <fieldset class="rechner__kontakt" id="kontakt">
+    <legend><KontaktTitel class="kontakt__titel">Kontakt</KontaktTitel></legend>
+    <div class="kontakt__raster">
+      <div class="feld">
+        <label class="feld__titel" for="k-name">Name</label>
+        <input class="eingabe" type="text" id="k-name" name="fi-text-name" autocomplete="name" required />
+      </div>
+      <div class="feld">
+        <label class="feld__titel" for="k-schule">Schule</label>
+        <input class="eingabe" type="text" id="k-schule" name="fi-text-schule" autocomplete="organization" required />
+      </div>
+      <div class="feld">
+        <label class="feld__titel" for="k-ort">Ort</label>
+        <input class="eingabe" type="text" id="k-ort" name="fi-text-ort" autocomplete="address-level2" required />
+      </div>
+      <div class="feld">
+        <label class="feld__titel" for="k-email">E-Mail</label>
+        <input class="eingabe" type="email" id="k-email" name="fi-sender-email" autocomplete="email" required />
+      </div>
+      <div class="feld">
+        <label class="feld__titel" for="k-telefon">Telefon <span class="feld__optional">(optional)</span></label>
+        <input class="eingabe" type="tel" id="k-telefon" name="fi-text-telefon" autocomplete="tel" />
+      </div>
+      <div class="feld kontakt__breit">
+        <label class="feld__titel" for="k-nachricht">Nachricht <span class="feld__optional">(optional)</span></label>
+        <textarea class="eingabe" id="k-nachricht" name="fi-text-nachricht" rows="5"></textarea>
+      </div>
+    </div>
+
+    <label class="einwilligung">
+      <input type="checkbox" name="fi-text-datenschutz" value="zugestimmt" required />
+      <span>
+        Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Anfrage verwendet werden. Mehr dazu in der
+        <a href="/datenschutz/">{shy('Datenschutzerklärung')}</a>.
+      </span>
+    </label>
+
+    <!-- Spamschutz (Honeypot, in Forminit unter „Honeypot“ als _gotcha eintragen) und berechnete Werte -->
+    <div class="honig" aria-hidden="true">
+      <label>Dieses Feld bitte leer lassen <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+    </div>
+    <input type="hidden" name="fi-text-betreff" value="Neue Anfrage über absolvo.shop" data-betreff />
+    <input type="hidden" name="fi-text-preis_pro_hoodie" value="ohne JavaScript nicht berechnet" data-feld="pro-hoodie" />
+    <input type="hidden" name="fi-text-gesamtpreis" value="ohne JavaScript nicht berechnet" data-feld="gesamt" />
+    <input type="hidden" name="fi-text-staffelpreis_pro_stueck" value="ohne JavaScript nicht berechnet" data-feld="staffel" />
+    <input type="hidden" name="fi-text-ersparnis_code" value="0" data-feld="ersparnis" />
+
+    <div class="absenden">
+      <button class="btn" type="submit" data-absenden>Anfrage abschicken</button>
+      <p class="fehler" role="alert" data-fehler hidden>
+        <span data-fehler-text>Das hat leider nicht geklappt.</span> Schreibt mir sonst einfach direkt an
+        <a href={mailHref}>{site.mail.anzeige}</a>.
+      </p>
+    </div>
+  </fieldset>
+
+  <div class="preisleiste ist-weg" data-preisleiste hidden>
+    <div class="preisleiste__text">
+      <p data-leiste-preis><strong data-ausgabe="pro-hoodie">–</strong> pro Hoodie</p>
+      <p class="preisleiste__gesamt" data-leiste-gesamt><span data-ausgabe="gesamt">–</span> gesamt</p>
+      <p class="preisleiste__mindest" data-leiste-mindest hidden>Ab {preise.mindestmenge} Hoodies geht's los.</p>
+    </div>
+    <a class="btn preisleiste__btn" href="#kontakt">Zur Anfrage</a>
+  </div>
+</form>
+
+<script>
+  import '../scripts/konfigurator';
+</script>
+
+<style>
+  /* ---------- Raster ---------- */
+  .rechner {
+    display: grid;
+    gap: 16px;
+  }
+
+  /* Eingaben in großen, schattenlosen Karten (DESIGN.md „Feature Card“) */
+  .rechner__konfig,
+  .rechner__kontakt {
+    padding: clamp(24px, 4vw, 44px);
+    background: var(--papier);
+    border-radius: var(--radius);
+  }
+
+  @media (min-width: 960px) {
+    .rechner {
+      grid-template-columns: minmax(0, 1fr) 380px;
+      column-gap: 20px;
+      row-gap: 20px;
+    }
+
+    .rechner__konfig {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .rechner__kontakt {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .rechner__ergebnis {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+
+    .ergebnis {
+      position: sticky;
+      top: calc(var(--kopf-hoehe) + 20px);
+    }
+  }
+
+  /* ---------- Felder ---------- */
+  fieldset {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .feld + .feld {
+    margin-top: 36px;
+  }
+
+  .feld__titel {
+    display: block;
+    margin-bottom: 12px;
+    padding: 0;
+    font-size: 1.125rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .feld__optional {
+    font-weight: 500;
+    color: var(--grau);
+  }
+
+  .feld__preis {
+    display: inline-block;
+    margin-left: 6px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: 500;
+    color: var(--grau);
+  }
+
+  .eingabe {
+    display: block;
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 2px solid var(--grau);
+    border-radius: var(--radius-feld);
+    font-size: 1.125rem;
+    line-height: 1.4;
+  }
+
+  .eingabe:hover {
+    border-color: var(--tinte);
+  }
+
+  .eingabe:focus-visible {
+    outline: 3px solid var(--tinte);
+    outline-offset: 2px;
+    border-color: var(--tinte);
+  }
+
+  .eingabe--kurz {
+    max-width: 220px;
+  }
+
+  .eingabe--code {
+    max-width: 260px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  textarea.eingabe {
+    resize: vertical;
+  }
+
+  /* Optionen als Pillen */
+  .optionen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .option {
+    position: relative;
+    display: flex;
+    cursor: pointer;
+  }
+
+  .option input,
+  .farbe input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .option__text {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 8px;
+    width: 100%;
+    min-height: 48px;
+    padding: 11px 20px;
+    background: var(--papier);
+    border: 2px solid var(--grau);
+    border-radius: var(--radius-pille);
+    font-weight: 700;
+    line-height: 1.25;
+    transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  }
+
+  .option:hover .option__text {
+    border-color: var(--tinte);
+  }
+
+  .option input:checked + .option__text {
+    background: var(--tinte);
+    border-color: var(--tinte);
+    color: var(--papier);
+  }
+
+  .option input:focus-visible + .option__text {
+    outline: 3px solid var(--tinte);
+    outline-offset: 3px;
+  }
+
+  .option__preis {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: 500;
+    color: var(--grau);
+  }
+
+  .option input:checked + .option__text .option__preis {
+    color: var(--papier-gedimmt);
+  }
+
+  /* Menge: Regler plus Zahl */
+  .menge {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .menge__zahl {
+    flex: none;
+    width: 112px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .menge__regler {
+    flex: 1;
+    min-width: 0;
+    height: 44px;
+    margin: 0;
+    background: transparent;
+    accent-color: var(--rot);
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .menge__regler::-webkit-slider-runnable-track {
+    height: 8px;
+    background: linear-gradient(to right, var(--tinte) var(--fuellung, 10%), var(--linie) var(--fuellung, 10%));
+    border-radius: 999px;
+  }
+
+  .menge__regler::-moz-range-track {
+    height: 8px;
+    background: var(--linie);
+    border-radius: 999px;
+  }
+
+  .menge__regler::-moz-range-progress {
+    height: 8px;
+    background: var(--tinte);
+    border-radius: 999px;
+  }
+
+  .menge__regler::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 30px;
+    height: 30px;
+    margin-top: -11px;
+    background: var(--rot);
+    border: 4px solid var(--papier);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--tinte);
+  }
+
+  .menge__regler::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    background: var(--rot);
+    border: 4px solid var(--papier);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--tinte);
+  }
+
+  .menge__regler:focus-visible {
+    outline: 3px solid var(--tinte);
+    outline-offset: 4px;
+    border-radius: 8px;
+  }
+
+  /* Farbkacheln */
+  .farben {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px 8px;
+  }
+
+  @media (min-width: 600px) {
+    .farben {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  .farbe {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    padding: 6px 2px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .farbe__kachel {
+    width: 48px;
+    height: 48px;
+    background: var(--farbe);
+    border: 2px solid var(--grau);
+    border-radius: 50%;
+    transition: box-shadow 0.12s ease;
+  }
+
+  .farbe__name {
+    font-size: var(--fs-klein);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .farbe:hover .farbe__kachel {
+    box-shadow: 0 0 0 3px var(--papier), 0 0 0 5px var(--grau);
+  }
+
+  .farbe input:checked ~ .farbe__kachel {
+    box-shadow: 0 0 0 3px var(--papier), 0 0 0 6px var(--tinte);
+  }
+
+  .farbe input:checked ~ .farbe__name {
+    font-weight: 800;
+  }
+
+  .farbe input:focus-visible ~ .farbe__name {
+    outline: 3px solid var(--tinte);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Code-Status */
+  .datei {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: #fff;
+    border: 2px dashed var(--grau);
+    border-radius: var(--radius-feld);
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .datei:hover {
+    border-color: var(--tinte);
+  }
+
+  .datei:focus-visible {
+    outline: 3px solid var(--tinte);
+    outline-offset: 2px;
+  }
+
+  .datei::file-selector-button {
+    margin-right: 14px;
+    padding: 10px 18px;
+    background: var(--tinte);
+    color: var(--papier);
+    border: 0;
+    border-radius: var(--radius-pille);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .datei-status:empty {
+    display: none;
+  }
+
+  .datei-status {
+    margin-top: 8px;
+    font-size: var(--fs-klein);
+    font-weight: 700;
+  }
+
+  .datei-status[data-zustand='fehler'] {
+    color: var(--rot-text);
+  }
+
+  .feld__hilfe {
+    margin-top: 8px;
+    font-size: var(--fs-klein);
+    color: var(--grau);
+  }
+
+  .code-status {
+    min-height: 1.5em;
+    margin-top: 8px;
+    font-size: var(--fs-klein);
+    font-weight: 700;
+  }
+
+  .code-status[data-zustand='gueltig'] {
+    color: var(--rot-text);
+  }
+
+  .code-status[data-zustand='zu_wenig'],
+  .code-status[data-zustand='unbekannt'] {
+    color: var(--tinte-2);
+  }
+
+  /* ---------- Ergebnis ---------- */
+  .ergebnis {
+    --fokus: var(--papier);
+    display: grid;
+    gap: 16px;
+    padding: clamp(24px, 3vw, 32px);
+    background: var(--tinte);
+    color: var(--papier);
+    border-radius: var(--radius);
+  }
+
+  .ergebnis .label {
+    color: var(--rot-auf-tinte);
+  }
+
+  .ergebnis__preis {
+    font-size: clamp(3rem, 2.5rem + 2vw, 4.25rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ergebnis__einheit {
+    margin-top: 4px;
+    font-weight: 700;
+  }
+
+  .ergebnis__zeilen {
+    margin-top: 20px;
+    border-top: 1px solid var(--tinte-2);
+  }
+
+  .ergebnis__zeilen > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 12px;
+    border-bottom: 1px solid var(--tinte-2);
+  }
+
+  .ergebnis__zeilen dt {
+    color: var(--papier-gedimmt);
+  }
+
+  .ergebnis__zeilen dd {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .ergebnis__ersparnis {
+    color: var(--rot-auf-tinte);
+  }
+
+  .ergebnis__mindest {
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+
+  .ergebnis__anreiz {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: var(--tinte-2);
+    border-radius: var(--radius-feld);
+    font-size: var(--fs-klein);
+    font-weight: 600;
+  }
+
+  .ergebnis__statisch {
+    --tabelle-linie: var(--tinte-2);
+    --tabelle-kopf: var(--papier-gedimmt);
+  }
+
+  .ergebnis__hinweis {
+    font-size: var(--fs-klein);
+    color: var(--papier-gedimmt);
+  }
+
+  .ergebnis__cta {
+    display: none;
+  }
+
+  @media (min-width: 960px) {
+    .ergebnis__cta {
+      display: inline-flex;
+    }
+  }
+
+  /* ---------- Kontakt ---------- */
+  /* Legend schwebend, damit sie nicht in der Rahmenlinie sitzt */
+  .rechner__kontakt > legend {
+    float: left;
+    width: 100%;
+    padding: 0;
+  }
+
+  .kontakt__titel {
+    margin-bottom: 28px;
+    font-size: var(--fs-h3);
+  }
+
+  .kontakt__raster {
+    clear: both;
+  }
+
+  .kontakt__raster {
+    display: grid;
+    gap: 24px 20px;
+  }
+
+  .kontakt__raster .feld + .feld {
+    margin-top: 0;
+  }
+
+  @media (min-width: 640px) {
+    .kontakt__raster {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .kontakt__breit {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .einwilligung {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-top: 28px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .einwilligung input {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    margin-top: 2px;
+    accent-color: var(--tinte);
+    cursor: pointer;
+  }
+
+  .honig {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .absenden {
+    display: grid;
+    justify-items: start;
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .absenden .btn[disabled] {
+    opacity: 0.7;
+    cursor: wait;
+  }
+
+  .fehler {
+    padding: 14px 18px;
+    background: var(--papier-2);
+    border-left: 4px solid var(--rot);
+    border-radius: var(--radius-feld);
+    font-weight: 600;
+  }
+
+  /* ---------- Mobile Preisleiste ---------- */
+  .preisleiste {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px var(--rand) calc(10px + env(safe-area-inset-bottom));
+    background: var(--tinte);
+    color: var(--papier);
+    transition: transform 0.2s ease;
+  }
+
+  .preisleiste[hidden] {
+    display: none;
+  }
+
+  .preisleiste.ist-weg {
+    visibility: hidden;
+    transform: translateY(110%);
+    transition: transform 0.2s ease, visibility 0s linear 0.2s;
+  }
+
+  .preisleiste__text {
+    min-width: 0;
+    line-height: 1.25;
+    font-size: var(--fs-klein);
+    white-space: nowrap;
+  }
+
+  .preisleiste strong {
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+  }
+
+  .preisleiste__gesamt,
+  .preisleiste__mindest {
+    font-size: 0.875rem;
+    color: var(--papier-gedimmt);
+  }
+
+  .preisleiste__mindest {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--papier);
+  }
+
+  .preisleiste__btn {
+    flex: none;
+    min-height: 48px;
+    padding: 12px 16px;
+  }
+
+  @media (min-width: 960px) {
+    .preisleiste {
+      display: none !important;
+    }
+  }
+
+  :global(body.hat-preisleiste) {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 960px) {
+    :global(body.hat-preisleiste) {
+      padding-bottom: 0;
+    }
+  }
+</style>

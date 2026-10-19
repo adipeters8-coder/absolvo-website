@@ -15,7 +15,7 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-behavior: smooth;
-  scroll-padding-top: 24px;
+  scroll-padding-top: calc(var(--kopf-hoehe) + 16px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -40,6 +40,7 @@ body {
   font-size: var(--fs-text);
   font-weight: 400;
   line-height: 1.5;
+  letter-spacing: -0.008em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -224,6 +225,23 @@ ol[role='list'] {
   max-width: 14em;
 }
 
+.abschnitt__kopf--link {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
+}
+
+.abschnitt__kopf-text {
+  display: grid;
+  gap: 20px;
+}
+
+@media (min-width: 860px) {
+  .abschnitt__kopf--link {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 48px;
+  }
+}
+
 .abschnitt__fuss {
   margin-top: clamp(32px, 5vw, 56px);
 }
@@ -343,7 +361,24 @@ ol[role='list'] {
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
+  color: var(--rot-text);
   font-weight: 700;
+  text-decoration: none;
+}
+
+.pfeil-link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.22em;
+}
+
+.abschnitt--tinte .pfeil-link {
+  color: var(--rot-auf-tinte);
+}
+
+/* Auf Rot bleibt der Link Papierweiß und unterstrichen */
+.abschnitt--rot .pfeil-link {
+  color: var(--papier);
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: 0.22em;
@@ -378,6 +413,7 @@ ol[role='list'] {
 
 .rotstift > svg {
   position: absolute;
+  max-width: none;
   pointer-events: none;
   overflow: visible;
 }

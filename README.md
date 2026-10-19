@@ -15,6 +15,6 @@ npm run build    # statischer Build nach dist/
 - Preise und Regeln des Rechners: `src/data/preise.json`
 - FAQ: `src/data/faq.json`
 - Social-Links, Mail, Schalter „Jeder zahlt selbst“: `src/data/site.json`
-- Formspree-ID: Repository-Variable `PUBLIC_FORMSPREE_ID` (Settings > Secrets and variables > Actions > Variables), lokal in `.env`
+- Forminit-Form-ID: `forminit_id` in `src/data/site.json` (öffentlich, kein Geheimnis). Feldnamen müssen dem Muster `fi-{typ}-{name}` folgen, sonst speichert Forminit sie nicht.
 
 Jeder Push auf `main` baut die Seite über `.github/workflows/deploy.yml` und veröffentlicht sie.

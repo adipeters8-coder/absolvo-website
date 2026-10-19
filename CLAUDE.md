@@ -19,7 +19,7 @@ Integrationen: @astrojs/sitemap. Sonst so wenig Abhängigkeiten wie möglich.
 
 Hosting: GitHub Pages mit GitHub Actions (offizielle Astro-Action). `public/CNAME` mit `www.absolvo.shop`. `site: 'https://www.absolvo.shop'` in astro.config, `trailingSlash: 'always'`.
 
-Formular: Formspree (Endpoint als Umgebungsvariable `PUBLIC_FORMSPREE_ID`, bis dahin Platzhalter). Absenden per fetch, danach Weiterleitung auf /danke/. Ohne JavaScript funktioniert das Formular als normales POST.
+Formular: Forminit (Form-ID `forminit_id` in src/data/site.json, Feldnamen nach dem Muster `fi-{typ}-{name}`, Datei-Upload kostenlos bis 25 MB pro Anfrage). Absenden per fetch, danach Weiterleitung auf /danke/. Ohne JavaScript funktioniert das Formular als normales POST.
 
 Struktur:
 ```
@@ -194,7 +194,7 @@ H1: Abgehakt. Text: Eure Anfrage ist da. Ich melde mich bei euch, meistens inner
 H1: Die Seite hat leider nicht bestanden. Button: Zum Preisrechner.
 
 ### /impressum/, /datenschutz/
-Platzhalter-Struktur anlegen, Inhalte liefert Adrian (Name, Anschrift, Kontakt, ggf. USt-ID). Datenschutz: Hosting GitHub, Formspree, selbst gehostete Schriften, keine Cookies in v1.
+Platzhalter-Struktur anlegen, Inhalte liefert Adrian (Name, Anschrift, Kontakt, ggf. USt-ID). Datenschutz: Hosting GitHub, Forminit, selbst gehostete Schriften, keine Cookies in v1.
 
 ## 6. Konfigurator (Preisrechner)
 
@@ -249,7 +249,7 @@ Ausgabe (sticky auf Desktop rechts, mobil als Leiste unten): Preis pro Hoodie gr
 
 Kleiner Anreiz unter dem Preis: „Bei [nächste Stufe] Hoodies zahlt ihr nur X € pro Stück.“
 
-Absenden: alle Auswahlen plus berechneter Preis als Felder an Formspree (Betreff „Neue Anfrage: [Schule], [Menge] Stück“), Honeypot-Feld gegen Spam, danach /danke/. Fehlerfall: Hinweis plus Mail-Link.
+Absenden: alle Auswahlen plus berechneter Preis als Felder an Forminit (Betreff „Neue Anfrage: [Schule], [Menge] Stück“), Honeypot-Feld gegen Spam, danach /danke/. Fehlerfall: Hinweis plus Mail-Link.
 
 Ohne JavaScript: Formular bleibt nutzbar, Preis wird dann nicht live berechnet, statische Preistabelle steht darüber.
 

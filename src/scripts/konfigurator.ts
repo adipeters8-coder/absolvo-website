@@ -1,4 +1,4 @@
-// Preisrechner: Live-Preis, Rabattcode-Prüfung und Absenden an Formspree.
+// Preisrechner: Live-Preis, Rabattcode-Prüfung, Datei-Prüfung und Absenden an Forminit.
 // Ohne JavaScript bleibt das Formular ein normales POST-Formular.
 import preiseJson from '../data/preise.json';
 import { berechne, formatEuro, istCodeAnfang, type Auswahl, type Ergebnis, type Preise } from '../lib/preis';
@@ -8,6 +8,18 @@ const preise = preiseJson as Preise;
 const euroKurz = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
 const formatEuroGanz = (betragCent: number) =>
   betragCent % 100 === 0 ? euroKurz.format(betragCent / 100) : formatEuro(betragCent);
+
+// Grenzen von Forminit: 25 MB Dateien pro Anfrage, die Setup-Anleitung empfiehlt mit Puffer bei 24 MB zu stoppen
+const MAX_DATEIEN = 10;
+const MAX_BYTES = 24 * 1000 * 1000;
+
+// Fehlercodes von Forminit, die wir verständlich erklären können
+const FEHLERTEXTE: Record<string, string> = {
+  FI_SCHEMA_FORMAT_EMAIL: 'Die E-Mail-Adresse sieht nicht ganz richtig aus. Schaut sie euch bitte noch mal an.',
+  TOO_MANY_REQUESTS: 'Das ging gerade etwas schnell hintereinander. Wartet ein paar Sekunden und schickt die Anfrage dann noch mal ab.',
+};
+const megabyte = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 });
+const alsMB = (bytes: number) => `${megabyte.format(bytes / 1000 / 1000)} MB`;
 
 function start() {
   const form = document.querySelector<HTMLFormElement>('#rechner');
@@ -21,7 +33,6 @@ function start() {
   const uebergroessen = $<HTMLInputElement>('#uebergroessen');
   const code = $<HTMLInputElement>('#rabattcode');
   const codeStatus = $<HTMLElement>('[data-code-status]');
-  const wunschtermin = $<HTMLInputElement>('#wunschtermin');
   const live = $<HTMLElement>('[data-live]');
   const statisch = $<HTMLElement>('[data-statisch]');
   const preisblock = $<HTMLElement>('[data-preisblock]');
@@ -35,7 +46,10 @@ function start() {
   const leisteMindest = $<HTMLElement>('[data-leiste-mindest]');
   const betreff = $<HTMLInputElement>('[data-betreff]');
   const absenden = $<HTMLButtonElement>('[data-absenden]');
+  const fehlerText = $<HTMLElement>('[data-fehler-text]');
   const fehler = $<HTMLElement>('[data-fehler]');
+  const dateien = $<HTMLInputElement>('[data-dateien]');
+  const dateienStatus = $<HTMLElement>('[data-dateien-status]');
 
   const gewaehlt = (name: string) => $<HTMLInputElement>(`input[name="${name}"]:checked`);
 
@@ -46,10 +60,6 @@ function start() {
     $<HTMLInputElement>(`[data-feld="${schluessel}"]`).value = wert;
   };
 
-  // Wunschtermin nicht in der Vergangenheit
-  const heute = new Date();
-  wunschtermin.min = new Date(heute.getTime() - heute.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-
   regler.hidden = false;
   live.hidden = false;
   statisch.hidden = true;
@@ -59,9 +69,9 @@ function start() {
   const lesen = (): Auswahl => ({
     menge: Number.parseInt(anzahl.value, 10) || 0,
     uebergroessen: Number.parseInt(uebergroessen.value, 10) || 0,
-    druckVorne: Number(gewaehlt('druck_vorne').dataset.farben),
-    ruecken: Number(gewaehlt('ruecken').dataset.farben),
-    aermelname: gewaehlt('aermelname').value === 'Ja',
+    druckVorne: Number(gewaehlt('fi-text-druck_vorne').dataset.farben),
+    ruecken: Number(gewaehlt('fi-text-ruecken').dataset.farben),
+    aermelname: gewaehlt('fi-text-aermelname').value === 'Ja',
     code: code.value,
   });
 
@@ -151,48 +161,91 @@ function start() {
     }
   });
 
-  // Preisleiste ausblenden, solange Ergebnis-Karte oder Kontaktbereich zu sehen sind
+  // Design-Dateien: Anzahl und Gesamtgröße prüfen, bevor etwas hochgeladen wird
+  dateien.addEventListener('change', () => {
+    const liste = [...(dateien.files ?? [])];
+    const summe = liste.reduce((gesamt, datei) => gesamt + datei.size, 0);
+    let problem = '';
+    if (liste.length > MAX_DATEIEN) problem = `Bitte höchstens ${MAX_DATEIEN} Dateien auswählen.`;
+    else if (summe > MAX_BYTES) problem = `Zusammen ${alsMB(summe)}. Mehr als 24 MB gehen nicht, schickt große Dateien lieber per Mail.`;
+    dateien.setCustomValidity(problem);
+    dateienStatus.dataset.zustand = problem ? 'fehler' : '';
+    dateienStatus.textContent =
+      problem || (liste.length ? `${liste.length} ${liste.length === 1 ? 'Datei' : 'Dateien'} ausgewählt, ${alsMB(summe)}` : '');
+  });
+
+  // Preisleiste nur zeigen, solange der Rechner im Bild ist, aber Ergebnis-Karte und Kontaktbereich nicht
   const sichtbar = new Set<Element>();
+  const ergebnisKarte = $('.ergebnis');
+  const kontakt = $('#kontakt');
   const beobachter = new IntersectionObserver((eintraege) => {
     for (const e of eintraege) {
       if (e.isIntersecting) sichtbar.add(e.target);
       else sichtbar.delete(e.target);
     }
-    leiste.classList.toggle('ist-weg', sichtbar.size > 0);
+    const imRechner = sichtbar.has(form);
+    const verdeckt = sichtbar.has(ergebnisKarte) || sichtbar.has(kontakt);
+    leiste.classList.toggle('ist-weg', !imRechner || verdeckt);
   });
-  beobachter.observe($('.ergebnis'));
-  beobachter.observe($('#kontakt'));
+  beobachter.observe(form);
+  beobachter.observe(ergebnisKarte);
+  beobachter.observe(kontakt);
 
-  // Absenden per fetch, danach /danke/
+  const zeigeFehler = (code?: string) => {
+    fehlerText.textContent = (code && FEHLERTEXTE[code]) || 'Das hat leider nicht geklappt.';
+    fehler.hidden = false;
+    if (code === 'FI_SCHEMA_FORMAT_EMAIL') $<HTMLInputElement>('#k-email').focus();
+  };
+
+  // Absenden per fetch an Forminit, danach /danke/
+  let wirdGesendet = false;
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
+    if (wirdGesendet) return;
     aktualisieren();
     fehler.hidden = true;
 
     const schule = ($<HTMLInputElement>('#k-schule').value || '').trim();
     betreff.value = `Neue Anfrage: ${schule}, ${anzahl.value} Stück`;
 
-    if (form.dataset.formspree !== 'ja') {
-      fehler.hidden = false;
+    if (form.dataset.formular !== 'ja') {
+      zeigeFehler();
       return;
     }
 
+    // FormData zuerst bauen, dann den Knopf sperren
+    const daten = new FormData(form);
+    // Ohne Auswahl schickt der Browser ein leeres Datei-Feld mit, das braucht Forminit nicht
+    if (!dateien.files?.length) daten.delete(dateien.name);
+
+    wirdGesendet = true;
     const knopfText = absenden.textContent;
     absenden.disabled = true;
     absenden.textContent = 'Wird gesendet …';
     try {
       const antwort = await fetch(form.action, {
         method: 'POST',
-        body: new FormData(form),
+        body: daten,
         headers: { Accept: 'application/json' },
       });
-      if (!antwort.ok) throw new Error(`Formspree ${antwort.status}`);
-      window.location.assign('/danke/');
-    } catch {
-      fehler.hidden = false;
-      absenden.disabled = false;
-      absenden.textContent = knopfText;
+      type Antwort = { success?: boolean; error?: string; hashId?: string; submission?: { hashId?: string } };
+      const ergebnis = (await antwort.json().catch(() => null)) as Antwort | null;
+      // Erfolg nur, wenn Forminit eine Einsendung mit hashId bestätigt
+      const hashId = ergebnis?.submission?.hashId ?? ergebnis?.hashId;
+      if (!antwort.ok || ergebnis?.success === false || typeof hashId !== 'string') {
+        console.error('Forminit-Fehler', antwort.status, ergebnis?.error);
+        zeigeFehler(ergebnis?.error);
+      } else {
+        window.location.assign('/danke/');
+        return;
+      }
+    } catch (fehlerObjekt) {
+      console.error('Forminit nicht erreichbar', fehlerObjekt);
+      zeigeFehler();
     }
+    wirdGesendet = false;
+    absenden.disabled = false;
+    absenden.textContent = knopfText;
   });
 
   aktualisieren();

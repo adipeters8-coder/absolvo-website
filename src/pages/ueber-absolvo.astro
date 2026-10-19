@@ -1,8 +1,10 @@
 ---
+import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import FuerWen from '../components/FuerWen.astro';
 import CtaBand from '../components/CtaBand.astro';
+import portrait from '../assets/adrian/adrian-portrait.png';
 ---
 
 <Base
@@ -19,34 +21,38 @@ import CtaBand from '../components/CtaBand.astro';
       Deutschland drucken.
     </p>
     <Fragment slot="aside">
-      <!-- Platzhalter bis das Foto da ist: rund, schwarzweiß, roter Kringel -->
+      <!-- Foto rund, schwarzweiß, mit rotem Kringel -->
       <figure class="portrait">
         <div class="portrait__bild">
-        <div class="portrait__kreis" role="img" aria-label="Platzhalter für ein Foto von Adrian">
-          <svg viewBox="0 0 200 200" aria-hidden="true" focusable="false">
-            <circle cx="100" cy="78" r="36" fill="#9C9A95" />
-            <path d="M34 200 C38 146 70 122 100 122 C130 122 162 146 166 200 Z" fill="#9C9A95" />
+          <div class="portrait__kreis">
+            <Picture
+              src={portrait}
+              alt="Adrian Peters, Gründer von ABSOLVO"
+              formats={['avif', 'webp']}
+              widths={[240, 360, 520]}
+              sizes="(min-width: 960px) 360px, 80vw"
+              loading="eager"
+              class="foto"
+            />
+          </div>
+          <svg class="portrait__kringel" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+            <path
+              d="M 60 18 C 110 -2 182 22 190 88 C 198 150 150 192 96 190 C 40 188 6 146 10 96 C 14 52 46 22 104 12"
+              fill="none"
+              stroke="#E3262B"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+            <path
+              d="M 48 30 C 100 4 176 32 186 96 C 192 156 140 196 90 194 C 34 190 2 150 8 90 C 14 46 60 16 120 16"
+              fill="none"
+              stroke="#E3262B"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              opacity="0.85"
+            />
           </svg>
         </div>
-        <svg class="portrait__kringel" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
-          <path
-            d="M 60 18 C 110 -2 182 22 190 88 C 198 150 150 192 96 190 C 40 188 6 146 10 96 C 14 52 46 22 104 12"
-            fill="none"
-            stroke="#E3262B"
-            stroke-width="4"
-            stroke-linecap="round"
-          />
-          <path
-            d="M 48 30 C 100 4 176 32 186 96 C 192 156 140 196 90 194 C 34 190 2 150 8 90 C 14 46 60 16 120 16"
-            fill="none"
-            stroke="#E3262B"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            opacity="0.85"
-          />
-        </svg>
-        </div>
-        <figcaption class="portrait__hinweis">[Foto folgt]</figcaption>
       </figure>
     </Fragment>
   </PageHero>
@@ -63,9 +69,10 @@ import CtaBand from '../components/CtaBand.astro';
     line-height: 1.45;
   }
 
+  /* 86 %, damit der Kringel (7 % Überstand je Seite) mobil nicht über den Rand ragt */
   .portrait {
     position: relative;
-    width: min(100%, 360px);
+    width: min(86%, 360px);
     margin-inline: auto;
   }
 
@@ -78,27 +85,21 @@ import CtaBand from '../components/CtaBand.astro';
     overflow: hidden;
     background: var(--papier-2);
     border-radius: 50%;
-    filter: grayscale(1) contrast(1.2);
   }
 
-  .portrait__kreis svg {
+  .portrait__kreis :global(img) {
     width: 100%;
     height: 100%;
+    object-fit: cover;
   }
 
   .portrait__kringel {
     position: absolute;
     inset: -7%;
     width: 114%;
+    max-width: none;
     height: 114%;
     pointer-events: none;
   }
 
-  .portrait__hinweis {
-    margin-top: 28px;
-    font-family: var(--font-mono);
-    font-size: var(--fs-label);
-    text-align: center;
-    color: var(--grau);
-  }
 </style>

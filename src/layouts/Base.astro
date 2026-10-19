@@ -4,7 +4,6 @@ import interTightLatin from '@fontsource-variable/inter-tight/files/inter-tight-
 import jetbrainsLatin500 from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-500-normal.woff2?url';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import StickyCta from '../components/StickyCta.astro';
 import { absolut, brotkrumen } from '../lib/schema';
 
 interface Props {
@@ -16,8 +15,6 @@ interface Props {
   jsonLd?: Record<string, unknown>[];
   /** Brotkrumen ohne Startseite; erzeugt BreadcrumbList */
   breadcrumb?: { name: string; pfad: string }[];
-  /** Mobile Sticky-Leiste „Preis berechnen“, auf dem Rechner aus */
-  stickyCta?: boolean;
 }
 
 const {
@@ -27,7 +24,6 @@ const {
   noindex = false,
   jsonLd = [],
   breadcrumb,
-  stickyCta = true,
 } = Astro.props;
 
 const canonical = absolut(Astro.url.pathname);
@@ -75,14 +71,13 @@ const fontFaces = `
     {schemas.map((schema) => <script type="application/ld+json" set:html={JSON.stringify(schema)} />)}
     <slot name="head" />
   </head>
-  <body class:list={{ 'hat-sticky-cta': stickyCta }}>
+  <body>
     <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
     <Header />
     <main id="inhalt" tabindex="-1">
       <slot />
     </main>
     <Footer />
-    {stickyCta && <StickyCta />}
   </body>
 </html>
 

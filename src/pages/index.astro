@@ -1,16 +1,23 @@
 ---
+import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import Button from '../components/Button.astro';
 import SectionLabel from '../components/SectionLabel.astro';
 import Rotstift from '../components/Rotstift.astro';
 import SchoolCards from '../components/SchoolCards.astro';
 import StepList from '../components/StepList.astro';
 import FaqItem from '../components/FaqItem.astro';
+import Preisrechner from '../components/Preisrechner.astro';
 import CtaBand from '../components/CtaBand.astro';
 import faq from '../data/faq.json';
+import preise from '../data/preise.json';
 import site from '../data/site.json';
 import { organisation, website } from '../lib/schema';
+import { cent, formatEuro } from '../lib/preis';
 import { shy } from '../lib/text';
+import adrianFoto from '../assets/adrian/adrian-freigestellt.png';
+
+const description =
+  'Abschlusspullover für Abi, Realschule und Berufskolleg. Mit Motto und allen Namen drauf, fairer Preis, gedruckt in Deutschland. Jetzt Preis berechnen.';
 
 const schritte = [
   { titel: 'Preis berechnen.', text: 'Menge, Farbe und Druck eingeben, Preis sofort sehen.' },
@@ -21,31 +28,38 @@ const schritte = [
 
 // „Jeder zahlt selbst“ nur zeigen, wenn der Sammellink mit Einzelzahlung umgesetzt ist
 const gruende = ['Fairer Preis', 'Ein Ansprechpartner', ...(site.einzelzahlung_umgesetzt ? ['Jeder zahlt selbst'] : [])];
+
+// Preis-Kapsel im Hero: günstigster Staffelpreis aus preise.json
+const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[0];
 ---
 
 <Base
   title="Abschlusspullover für jeden Abschluss | ABSOLVO"
-  description="Abschlusspullover für Abi, Realschule und Berufskolleg. Mit Motto und allen Namen drauf, fairer Preis, gedruckt in Deutschland. Jetzt Preis berechnen."
+  description={description}
   jsonLd={[organisation(), website()]}
 >
   <!-- Hero -->
   <section class="abschnitt abschnitt--rot hero" aria-labelledby="hero-titel">
     <div class="container hero__raster">
-      <div class="hero__kopf">
-        <SectionLabel text="Jahrgang 2027" />
-        <h1 id="hero-titel">
-          {shy('Abschlusspullover')} für jeden <span class="nowrap">Abschluss.<Rotstift typ="haken" farbe="tinte" animiert /></span>
-        </h1>
-      </div>
-      <div class="hero__text">
-        <p class="lead">
-          Abi, Realschule, Berufskolleg. Ihr bekommt euren Pulli mit Motto und allen Namen drauf, zu einem fairen Preis
-          und mit einem Ansprechpartner, der sich auch wirklich meldet.
-        </p>
-        <div class="btn-reihe">
-          <Button href="/preis-berechnen/" variante="auf-rot">Preis berechnen</Button>
-          <a class="pfeil-link hero__link" href="/so-laeufts/">So läuft's</a>
+      <SectionLabel text="Jahrgang 2027" />
+      <h1 id="hero-titel">
+        {shy('Abschlusspullover')} für jeden <span class="nowrap">Abschluss.<Rotstift typ="haken" farbe="tinte" animiert /></span>
+      </h1>
+      <p class="lead">
+        Abi, Realschule, Berufskolleg. Ihr bekommt euren Pulli mit Motto und allen Namen drauf, zu einem fairen Preis und
+        mit einem Ansprechpartner, der sich auch wirklich meldet.
+      </p>
+      <div class="hero__aktion">
+        <!-- Preis-Kapsel nach DESIGN.md „Floating Pricing Callout“ -->
+        <div class="kapsel">
+          <p class="kapsel__preis">
+            <span class="kapsel__ab">ab</span>
+            <strong>{formatEuro(cent(guenstigste.preis))}</strong>
+            <span class="kapsel__einheit">pro Hoodie</span>
+          </p>
+          <a class="btn kapsel__btn" href="#preisrechner">Preis berechnen</a>
         </div>
+        <a class="pfeil-link hero__link" href="/so-laeufts/">So läuft's</a>
       </div>
     </div>
   </section>
@@ -64,29 +78,69 @@ const gruende = ['Fairer Preis', 'Ein Ansprechpartner', ...(site.einzelzahlung_u
   <!-- 02 · So läuft's -->
   <section class="abschnitt abschnitt--tinte" aria-labelledby="ablauf-titel">
     <div class="container">
-      <div class="abschnitt__kopf">
-        <SectionLabel nummer="02" text="So läuft's" />
-        <h2 id="ablauf-titel">{shy('So kommt ihr an euren Abschlusspullover')}</h2>
-      </div>
-      <StepList schritte={schritte} />
-      <div class="abschnitt__fuss">
+      <div class="abschnitt__kopf abschnitt__kopf--link">
+        <div class="abschnitt__kopf-text">
+          <SectionLabel nummer="02" text="So läuft's" />
+          <h2 id="ablauf-titel">{shy('So kommt ihr an euren Abschlusspullover')}</h2>
+        </div>
         <a class="pfeil-link" href="/so-laeufts/">Mehr zum Ablauf</a>
       </div>
+      <StepList schritte={schritte} />
     </div>
   </section>
 
-  <!-- 03 · Warum ABSOLVO -->
-  <section class="abschnitt abschnitt--papier-2" aria-labelledby="warum-titel">
-    <div class="container warum">
+  <!-- 03 · Preisrechner direkt auf der Startseite -->
+  <section class="abschnitt abschnitt--papier-2 rechner-start" id="preisrechner" aria-labelledby="rechner-titel">
+    <div class="container">
       <div class="abschnitt__kopf">
-        <SectionLabel nummer="03" text="Warum ABSOLVO" />
-        <h2 id="warum-titel">Warum <Rotstift typ="unterstreichung">ABSOLVO</Rotstift>?</h2>
-      </div>
-      <div class="warum__raster">
-        <p class="warum__text">
-          Ich mache seit 2019 Abschlusspullover für Klassen und Jahrgänge. Mit ABSOLVO bekommt das jetzt einen Namen. Ich
-          halte die Abläufe schlank, lasse in Deutschland drucken und rede mit euch auf Augenhöhe. Ohne Doktorhut-Clipart.
+        <SectionLabel nummer="03" text="Preisrechner" />
+        <h2 id="rechner-titel">{shy('Was kostet euer Abschlusspullover?')}</h2>
+        <p class="abschnitt__intro">
+          Gebt ein, was ihr euch vorstellt. Der Preis passt sich sofort an. Danach schickt ihr die Anfrage ab und ich
+          melde mich bei euch.
         </p>
+      </div>
+      <Preisrechner kontaktEbene="h3" />
+    </div>
+  </section>
+
+  <!-- 04 · Warum ABSOLVO, mit Adrian -->
+  <section class="abschnitt abschnitt--papier" aria-labelledby="warum-titel">
+    <div class="container ueber-mich">
+      <figure class="ueber-mich__bild">
+        <Picture
+          src={adrianFoto}
+          alt="Adrian Peters, Gründer von ABSOLVO"
+          formats={['avif', 'webp']}
+          widths={[320, 480, 680]}
+          sizes="(min-width: 960px) 440px, 80vw"
+          class="foto"
+        />
+        <figcaption class="label">Adrian, Gründer und einziger Ansprechpartner</figcaption>
+      </figure>
+      <div class="ueber-mich__text">
+        <div class="abschnitt__kopf">
+          <SectionLabel nummer="04" text="Warum ABSOLVO" />
+          <h2 id="warum-titel">Warum <Rotstift typ="unterstreichung">ABSOLVO</Rotstift>?</h2>
+        </div>
+        <div class="fliesstext">
+          <p class="warum__text">
+            Ich mache seit 2019 Abschlusspullover für Klassen und Jahrgänge. Mit ABSOLVO bekommt das jetzt einen Namen.
+          </p>
+          <p>
+            Bei den meisten Anbietern, die ich mir angeschaut habe, läuft alles nach Schema F. Standardmotiv,
+            Bestellformular, nächster Auftrag. Das ist Massengeschäft, und genau so fühlt es sich auch an.
+          </p>
+          <p>
+            Ein Abschlusspullover hängt Jahre später noch im Schrank, mit allen Namen drauf. Deshalb nehme ich mir für
+            jeden Jahrgang Zeit, schaue mir eure Ideen genau an und sage ehrlich, was gut aussieht. Ihr schreibt dabei
+            immer direkt mit mir.
+          </p>
+          <p>
+            Ich halte die Abläufe schlank, lasse in Deutschland drucken und rede mit euch auf Augenhöhe. Ohne
+            Doktorhut-Clipart.
+          </p>
+        </div>
         <ul role="list" class="warum__karten">
           {
             gruende.map((g, i) => (
@@ -97,54 +151,51 @@ const gruende = ['Fairer Preis', 'Ein Ansprechpartner', ...(site.einzelzahlung_u
             ))
           }
         </ul>
+        <a class="pfeil-link" href="/ueber-absolvo/">Mehr über Adrian und ABSOLVO</a>
       </div>
     </div>
   </section>
 
-  <!-- 04 · FAQ -->
-  <section class="abschnitt abschnitt--papier" aria-labelledby="faq-titel">
-    <div class="container faq-kurz">
-      <div class="abschnitt__kopf">
-        <SectionLabel nummer="04" text="FAQ" />
-        <h2 id="faq-titel">Häufige Fragen</h2>
-      </div>
-      <div>
-        {faq.slice(0, 4).map((f) => <FaqItem frage={f.frage} antwort={f.antwort} />)}
-        <div class="abschnitt__fuss">
-          <a class="pfeil-link" href="/faq/">Alle Fragen zu Abschlusspullovern</a>
+  <!-- 05 · FAQ -->
+  <section class="abschnitt abschnitt--papier-2 faq-abschnitt" aria-labelledby="faq-titel">
+    <div class="container">
+      <div class="abschnitt__kopf abschnitt__kopf--link">
+        <div class="abschnitt__kopf-text">
+          <SectionLabel nummer="05" text="FAQ" />
+          <h2 id="faq-titel">Häufige Fragen</h2>
         </div>
+        <a class="pfeil-link" href="/faq/">Alle Fragen zu Abschlusspullovern</a>
+      </div>
+      <div class="faq-kurz">
+        {faq.slice(0, 4).map((f) => <FaqItem frage={f.frage} antwort={f.antwort} />)}
       </div>
     </div>
   </section>
 
-  <CtaBand />
+  <CtaBand href="#preisrechner" />
 </Base>
 
 <style>
   /* ---------- Hero ---------- */
   .hero {
-    padding-block: clamp(40px, 6vw, 88px) clamp(56px, 8vw, 112px);
-    overflow: hidden;
+    padding-block: clamp(36px, 5vw, 80px) clamp(44px, 6vw, 96px);
   }
 
   .hero__raster {
     display: grid;
-    gap: 28px;
-  }
-
-  .hero__kopf {
-    display: grid;
-    gap: 20px;
+    gap: 24px;
   }
 
   .hero h1 {
     max-width: 11em;
   }
 
-  .hero__text {
-    display: grid;
-    gap: 28px;
-    justify-items: start;
+  .hero__aktion {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 28px;
+    margin-top: 8px;
   }
 
   .hero__link {
@@ -153,26 +204,135 @@ const gruende = ['Fairer Preis', 'Ein Ansprechpartner', ...(site.einzelzahlung_u
     font-weight: 800;
   }
 
-  /* ---------- Warum ---------- */
-  .warum__raster {
+  /* Papierweiße Kapsel mit Preis und kompakter Pille, ohne Schatten */
+  .kapsel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 20px;
+    padding: 10px 10px 10px 24px;
+    background: var(--papier);
+    color: var(--tinte);
+    border-radius: var(--radius);
+  }
+
+  .kapsel__preis {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 8px;
+    line-height: 1.2;
+  }
+
+  .kapsel__ab,
+  .kapsel__einheit {
+    font-size: var(--fs-klein);
+    font-weight: 600;
+    color: var(--tinte-2);
+  }
+
+  .kapsel__preis strong {
+    font-size: 1.625rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+  }
+
+  /* Rot-dunkel, damit 17 px Papierweiß AA schaffen */
+  .kapsel__btn {
+    min-height: 48px;
+    padding: 12px 22px;
+    font-size: 1.0625rem;
+    --btn-bg: var(--rot-dunkel);
+    --btn-bg-hover: var(--tinte);
+  }
+
+  @media (max-width: 479.98px) {
+    .kapsel {
+      width: 100%;
+      padding: 16px 12px 12px;
+    }
+
+    .kapsel__preis {
+      padding-inline: 8px;
+    }
+
+    .kapsel__btn {
+      flex: 1 1 100%;
+    }
+  }
+
+  /* ---------- Preisrechner ---------- */
+  .rechner-start {
+    padding-top: clamp(48px, 6vw, 88px);
+  }
+
+  .abschnitt__intro {
+    max-width: 34em;
+    color: var(--tinte-2);
+  }
+
+  /* ---------- Warum ABSOLVO, mit Adrian ---------- */
+  .ueber-mich {
     display: grid;
-    gap: 32px;
+    gap: 40px;
+  }
+
+  /* Freigestelltes Foto in einer großen, schattenlosen Karte (DESIGN.md „Feature Media Card“) */
+  .ueber-mich__bild {
+    display: grid;
+    align-content: end;
+    justify-items: center;
+    gap: 0;
+    overflow: hidden;
+    padding-top: 32px;
+    background: var(--papier-2);
+    border-radius: var(--radius);
+  }
+
+  /* Bis etwa zur Hüfte zeigen, unten läuft das Foto aus der Karte */
+  .ueber-mich__bild :global(img) {
+    width: min(78%, 360px);
+    height: auto;
+    aspect-ratio: 0.72;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  .ueber-mich__bild figcaption {
+    justify-self: stretch;
+    padding: 16px 24px 20px;
+    background: var(--papier);
+    border-top: 1px solid var(--linie);
+    text-align: center;
+  }
+
+  .ueber-mich__text {
+    display: grid;
+    gap: 28px;
+    align-content: start;
+    justify-items: start;
+  }
+
+  .ueber-mich__text .abschnitt__kopf {
+    margin-bottom: 0;
   }
 
   .warum__text {
-    max-width: 30em;
     font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
-    line-height: 1.45;
+    line-height: 1.4;
   }
 
   .warum__karten {
     display: grid;
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    width: 100%;
   }
 
   .warum__karte {
     display: grid;
-    gap: 28px;
+    gap: 20px;
+    padding: 24px;
   }
 
   .warum__karte h3 {
@@ -180,20 +340,19 @@ const gruende = ['Fairer Preis', 'Ein Ansprechpartner', ...(site.einzelzahlung_u
   }
 
   @media (min-width: 960px) {
-    .warum__raster {
-      grid-template-columns: 1.1fr 1fr;
-      gap: 64px;
+    .ueber-mich {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: clamp(48px, 6vw, 88px);
       align-items: start;
     }
   }
 
   /* ---------- FAQ ---------- */
-  @media (min-width: 960px) {
-    .faq-kurz {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 64px;
-      align-items: start;
-    }
+  .faq-kurz {
+    max-width: 52rem;
+  }
+
+  .faq-abschnitt {
+    --faq-linie: #D6CFC2;
   }
 </style>

@@ -17,9 +17,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      # Formspree-ID als Repository-Variable hinterlegen (Settings > Secrets and variables > Actions > Variables)
-      PUBLIC_FORMSPREE_ID: ${{ vars.PUBLIC_FORMSPREE_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
