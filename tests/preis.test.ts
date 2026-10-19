@@ -1,10 +1,12 @@
-// Testfälle aus CLAUDE.md, Abschnitt 8 (Abnahme v1), gerechnet mit src/data/preise.json
+// Testfälle aus CLAUDE.md, Abschnitt 8 (Abnahme v1).
+// Die Rechenlogik wird gegen die festen Briefing-Preise geprüft (tests/fixtures/preise-briefing.json),
+// damit neue Preise in src/data/preise.json die Tests nicht brechen. Die echten Preise prüft preise-daten.test.ts.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { berechne, formatEuro, type Auswahl, type Preise } from '../src/lib/preis.ts';
 
-const preise: Preise = JSON.parse(readFileSync(new URL('../src/data/preise.json', import.meta.url), 'utf8'));
+const preise: Preise = JSON.parse(readFileSync(new URL('./fixtures/preise-briefing.json', import.meta.url), 'utf8'));
 
 const basis: Auswahl = { menge: 30, uebergroessen: 0, druckVorne: 1, ruecken: 1, aermelname: false, code: '' };
 const rechne = (aenderung: Partial<Auswahl>) => berechne(preise, { ...basis, ...aenderung });

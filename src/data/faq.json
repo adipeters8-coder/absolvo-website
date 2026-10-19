@@ -14,7 +14,8 @@
   {
     "frage": "Muss einer für alle das Geld einsammeln?",
     "antwort": "Das klären wir bei der Anfrage, Ziel ist, dass jeder selbst zahlt.",
-    "_todo": "[Antwort je nach Zahlungslösung]"
+    "antwort_einzelzahlung": "Nein. Jeder bekommt eine eigene Zahlungsaufforderung per Mail und zahlt seinen Pulli selbst online. Übergrößen und Extras sind dabei schon eingerechnet.",
+    "_todo": "antwort_einzelzahlung erscheint erst, wenn in site.json einzelzahlung_umgesetzt auf true steht"
   },
   {
     "frage": "Wie lange dauert es bis zur Lieferung?",

@@ -1,0 +1,23 @@
+{
+  "mindestmenge": 20,
+  "staffel_basis": [
+    { "ab": 20, "preis": 39.90 },
+    { "ab": 30, "preis": 36.90 },
+    { "ab": 50, "preis": 34.90 },
+    { "ab": 100, "preis": 32.90 }
+  ],
+  "basis_enthaelt": "Hoodie, Druck vorne 1-farbig, Rücken mit Namensliste 1-farbig, Design, Versand",
+  "aufpreise_pro_stueck": {
+    "druck_vorne_2_farben": 1.50,
+    "druck_vorne_3_farben": 3.00,
+    "ruecken_2_farben": 1.50,
+    "aermelname": 5.00,
+    "uebergroesse_3xl_bis_5xl": 6.00
+  },
+  "farben": ["Schwarz", "Navy", "Grau meliert", "Weiß", "Bordeaux", "Flaschengrün"],
+  "codes": {
+    "INSTA50": { "rabatt_eur": 50, "ab_menge": 40 },
+    "FLYER50": { "rabatt_eur": 50, "ab_menge": 40 }
+  },
+  "hinweis": "Alle Preise inklusive Mehrwertsteuer. Den endgültigen Preis bekommt ihr, nachdem ich eure Anfrage angeschaut habe."
+}

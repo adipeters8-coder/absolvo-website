@@ -1,7 +1,7 @@
 // Preisrechner: Live-Preis, Rabattcode-Prüfung, Datei-Prüfung und Absenden an Forminit.
 // Ohne JavaScript bleibt das Formular ein normales POST-Formular.
 import preiseJson from '../data/preise.json';
-import { berechne, formatEuro, istCodeAnfang, type Auswahl, type Ergebnis, type Preise } from '../lib/preis';
+import { berechne, formatEuro, istCodeAnfang, staffelStufe, type Auswahl, type Ergebnis, type Preise } from '../lib/preis';
 
 const preise = preiseJson as Preise;
 
@@ -18,9 +18,11 @@ const FEHLERTEXTE: Record<string, string> = {
   FI_SCHEMA_FORMAT_EMAIL: 'Die E-Mail-Adresse sieht nicht ganz richtig aus. Schaut sie euch bitte noch mal an.',
   TOO_MANY_REQUESTS: 'Das ging gerade etwas schnell hintereinander. Wartet ein paar Sekunden und schickt die Anfrage dann noch mal ab.',
 };
-// Anreiz erst kurz vor der nächsten Stufe zeigen: höchstens 5 Hoodies oder 10 % der Stufe entfernt
-const anreizSchwelle = (stufeAb: number) => Math.max(5, Math.ceil(stufeAb * 0.1));
-const prozent = new Intl.NumberFormat('de-DE', { style: 'percent', maximumFractionDigits: 0 });
+// Anreiz erst kurz vor der nächsten Stufe zeigen. Maßstab ist der Abstand zwischen den Stufen:
+// bei 5er-Abständen ab 3 Hoodies vorher, bei 10er-Abständen ab 5. Bei engen Stufen (2er) reicht der
+// kleine Hinweis in der Preis-Karte. Unter der Mindestmenge ab 5 Hoodies vorher.
+const anreizSchwelle = (abstand: number | null) => (abstand === null ? 5 : abstand >= 5 ? Math.ceil(abstand / 2) : 0);
+const prozent = new Intl.NumberFormat('de-DE', { style: 'percent', maximumFractionDigits: 1 });
 const hoodies = (n: number) => `${n} ${n === 1 ? 'Hoodie' : 'Hoodies'}`;
 
 const megabyte = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 });
@@ -113,7 +115,9 @@ function start() {
   const zeigeAnstupser = (e: Ergebnis) => {
     const stufe = e.naechsteStufe;
     const fehlen = stufe ? stufe.ab - e.menge : 0;
-    if (!stufe || e.menge < 1 || fehlen < 1 || fehlen > anreizSchwelle(stufe.ab)) {
+    const aktuelle = staffelStufe(preise, e.menge);
+    const abstand = stufe && aktuelle ? stufe.ab - aktuelle.ab : null;
+    if (!stufe || e.menge < 1 || fehlen < 1 || fehlen > anreizSchwelle(abstand)) {
       anstupser.hidden = true;
       anstupser.classList.remove('ist-neu');
       return false;
