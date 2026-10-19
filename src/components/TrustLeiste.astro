@@ -1,0 +1,140 @@
+---
+// Schmale Vertrauensleiste unter dem Hero: vier kurze Punkte mit kleinen Symbolen.
+// Zahlungsarten und Portal kommen aus site.json, damit nichts versprochen wird, was es noch nicht gibt.
+import site from '../data/site.json';
+
+const zahlungsarten = site.zahlungsarten ?? ['Rechnung'];
+const zahlungText =
+  zahlungsarten.length > 1 ? `Per ${zahlungsarten.join(', ')} und Co.` : `Ganz einfach per ${zahlungsarten[0]}.`;
+
+const punkte = [
+  {
+    titel: 'Druck in Deutschland',
+    text: 'Hochwertig gedruckt und sauber verarbeitet.',
+    icon: 'M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z',
+  },
+  {
+    titel: 'Sichere Zahlung',
+    text: zahlungText,
+    icon: 'M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3zM9 12l2 2 4-4',
+  },
+  {
+    titel: 'Alles auf einen Blick',
+    text: 'Status, Namen und Zahlung im Kundenportal.',
+    icon: 'M6 4h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3zM3 9h18M9 9v11',
+    bald: !site.portal_live,
+  },
+  {
+    titel: 'Qualität seit 2019',
+    text: 'Abschlusspullover für Klassen und Jahrgänge.',
+    icon: 'M12 4a5 5 0 1 1 0 10 5 5 0 0 1 0-10zM9 13.5L8 21l4-2 4 2-1-7.5',
+  },
+];
+---
+
+<section class="trust" aria-label="Darauf könnt ihr euch verlassen">
+  <div class="container">
+    <ul role="list" class="trust__liste">
+      {
+        punkte.map((p) => (
+          <li class="trust__punkt">
+            <svg class="trust__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d={p.icon} />
+            </svg>
+            <div>
+              <p class="trust__titel">
+                {p.titel}
+                {p.bald && <span class="trust__bald">Bald</span>}
+              </p>
+              <p class="trust__text">{p.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .trust {
+    padding-block: clamp(24px, 3.5vw, 40px);
+    background: var(--papier);
+    border-bottom: 1px solid var(--linie);
+  }
+
+  .trust__liste {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 16px;
+  }
+
+
+  @media (min-width: 960px) {
+    .trust__liste {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 32px;
+    }
+  }
+
+  /* Mobil: Symbol über dem Titel, damit der Text die volle Spaltenbreite hat */
+  .trust__punkt {
+    display: grid;
+    gap: 8px;
+    align-items: start;
+  }
+
+  @media (min-width: 600px) {
+    .trust__punkt {
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+    }
+  }
+
+  .trust__icon {
+    width: 24px;
+    height: 24px;
+    margin-top: 1px;
+    fill: none;
+    stroke: var(--rot-text);
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .trust__titel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .trust__text {
+    margin-top: 2px;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--tinte-2);
+  }
+
+  .trust__bald {
+    padding: 2px 8px;
+    background: var(--tinte);
+    color: var(--papier);
+    border-radius: var(--radius-pille);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* nach der Grundregel, damit es greift */
+  @media (min-width: 600px) {
+    .trust__text {
+      font-size: var(--fs-klein);
+    }
+  }
+</style>

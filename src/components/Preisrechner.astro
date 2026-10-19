@@ -4,6 +4,7 @@ import Preistabelle from './Preistabelle.astro';
 import preise from '../data/preise.json';
 import farbwerte from '../data/farbwerte.json';
 import site from '../data/site.json';
+import hoodie from '../data/hoodie.json';
 import { cent, formatEuro } from '../lib/preis';
 import { shy } from '../lib/text';
 
@@ -82,9 +83,13 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
     </div>
 
     <div class="feld">
-      <label class="feld__titel" for="uebergroessen">
-        Davon Übergrößen 3XL bis 5XL <span class="feld__preis">{plus(a.uebergroesse_3xl_bis_5xl)} pro Stück</span>
-      </label>
+      <div class="feld__kopf">
+        <label class="feld__titel" for="uebergroessen">
+          Davon Übergrößen 3XL bis 5XL <span class="feld__preis">{plus(a.uebergroesse_3xl_bis_5xl)} pro Stück</span>
+        </label>
+        <!-- öffnet das Pop-up aus HoodieDetails (muss auf derselben Seite stehen) -->
+        <button type="button" class="feld__link" popovertarget="groessentabelle">Größentabelle</button>
+      </div>
       <input
         class="eingabe eingabe--kurz"
         type="number"
@@ -110,7 +115,16 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
             </label>
           ))
         }
+        <label class="farbe">
+          <input type="radio" name="fi-text-farbe" value="Andere Farbe (siehe Nachricht)" />
+          <span class="farbe__kachel farbe__kachel--andere" aria-hidden="true"></span>
+          <span class="farbe__name">Andere Farbe</span>
+        </label>
       </div>
+      <p class="feld__hilfe">
+        Das sind die beliebtesten Farben. Insgesamt gibt es {hoodie.farben_anzahl}, eure Wunschfarbe schreibt ihr einfach
+        unten in die Nachricht.
+      </p>
     </fieldset>
 
     <fieldset class="feld">
@@ -564,14 +578,8 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
   /* Farbkacheln */
   .farben {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
     gap: 16px 8px;
-  }
-
-  @media (min-width: 600px) {
-    .farben {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-    }
   }
 
   .farbe {
@@ -591,6 +599,55 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
     border: 2px solid var(--grau);
     border-radius: 50%;
     transition: box-shadow 0.12s ease;
+  }
+
+  /* „Andere Farbe“: gestrichelter Kreis mit Plus */
+  .farbe__kachel--andere {
+    position: relative;
+    background: var(--papier);
+    border-style: dashed;
+  }
+
+  .farbe__kachel--andere::before,
+  .farbe__kachel--andere::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2px;
+    margin: -1px 0 0 -8px;
+    background: var(--tinte);
+    border-radius: 2px;
+  }
+
+  .farbe__kachel--andere::after {
+    transform: rotate(90deg);
+  }
+
+  .feld__kopf {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 16px;
+  }
+
+  .feld__link {
+    margin-bottom: 12px;
+    padding: 4px 0;
+    background: none;
+    border: 0;
+    color: var(--rot-text);
+    font: inherit;
+    font-size: var(--fs-klein);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .feld__link:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 
   .farbe__name {

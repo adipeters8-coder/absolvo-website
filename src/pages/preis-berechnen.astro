@@ -4,6 +4,8 @@ import SectionLabel from '../components/SectionLabel.astro';
 import Preistabelle from '../components/Preistabelle.astro';
 import Preisrechner from '../components/Preisrechner.astro';
 import CtaBand from '../components/CtaBand.astro';
+import TrustLeiste from '../components/TrustLeiste.astro';
+import HoodieDetails from '../components/HoodieDetails.astro';
 import preise from '../data/preise.json';
 import { produkt } from '../lib/schema';
 import { shy } from '../lib/text';
@@ -29,13 +31,17 @@ const description =
     </div>
   </section>
 
+  <TrustLeiste />
+
   <section class="abschnitt abschnitt--papier-2 rechner-abschnitt" id="preisrechner" aria-label="Preisrechner und Anfrage">
     <div class="container">
       <Preisrechner />
     </div>
   </section>
 
-  <section class="abschnitt abschnitt--papier" aria-labelledby="im-preis-titel">
+  <HoodieDetails />
+
+  <section class="abschnitt abschnitt--papier-2" aria-labelledby="im-preis-titel">
     <div class="container im-preis">
       <div class="abschnitt__kopf">
         <SectionLabel text="Preise" />

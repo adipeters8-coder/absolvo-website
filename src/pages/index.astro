@@ -7,6 +7,8 @@ import SchoolCards from '../components/SchoolCards.astro';
 import StepList from '../components/StepList.astro';
 import FaqItem from '../components/FaqItem.astro';
 import Preisrechner from '../components/Preisrechner.astro';
+import TrustLeiste from '../components/TrustLeiste.astro';
+import HoodieDetails from '../components/HoodieDetails.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { fragen as faq } from '../lib/faq';
 import preise from '../data/preise.json';
@@ -64,6 +66,8 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
     </div>
   </section>
 
+  <TrustLeiste />
+
   <!-- 01 · Für wen -->
   <section class="abschnitt abschnitt--papier" aria-labelledby="fuer-wen-titel">
     <div class="container">
@@ -104,8 +108,11 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
     </div>
   </section>
 
-  <!-- 04 · Warum ABSOLVO, mit Adrian -->
-  <section class="abschnitt abschnitt--papier" aria-labelledby="warum-titel">
+  <!-- 04 · Der Hoodie -->
+  <HoodieDetails nummer="04" />
+
+  <!-- 05 · Warum ABSOLVO, mit Adrian -->
+  <section class="abschnitt abschnitt--papier-2 warum-abschnitt" aria-labelledby="warum-titel">
     <div class="container ueber-mich">
       <figure class="ueber-mich__bild">
         <div class="ueber-mich__foto">
@@ -122,7 +129,7 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
       </figure>
       <div class="ueber-mich__text">
         <div class="abschnitt__kopf">
-          <SectionLabel nummer="04" text="Warum ABSOLVO" />
+          <SectionLabel nummer="05" text="Warum ABSOLVO" />
           <h2 id="warum-titel">Warum <Rotstift typ="unterstreichung">ABSOLVO</Rotstift>?</h2>
         </div>
         <div class="fliesstext">
@@ -151,11 +158,11 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
     </div>
   </section>
 
-  <!-- 05 · FAQ -->
-  <section class="abschnitt abschnitt--papier-2 faq-abschnitt" aria-labelledby="faq-titel">
+  <!-- 06 · FAQ -->
+  <section class="abschnitt abschnitt--papier" aria-labelledby="faq-titel">
     <div class="container">
       <div class="abschnitt__kopf">
-        <SectionLabel nummer="05" text="FAQ" />
+        <SectionLabel nummer="06" text="FAQ" />
         <h2 id="faq-titel">Häufige Fragen</h2>
       </div>
       <div class="faq-kurz">
@@ -279,7 +286,7 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
     grid-template-rows: 1fr auto;
     overflow: hidden;
     padding-top: 32px;
-    background: var(--papier-2);
+    background: var(--papier);
     border-radius: var(--radius);
   }
 
@@ -301,7 +308,7 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
   .ueber-mich__bild figcaption {
     justify-self: stretch;
     padding: 16px 24px 20px;
-    background: var(--papier);
+    background: var(--papier-2);
     border-top: 1px solid var(--linie);
     text-align: center;
   }
@@ -334,7 +341,7 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
     align-items: center;
     gap: 10px;
     padding: 10px 18px 10px 14px;
-    background: var(--papier-2);
+    background: var(--papier);
     border-radius: var(--radius-pille);
     font-size: 1.0625rem;
     font-weight: 800;
@@ -366,7 +373,4 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
     justify-content: flex-end;
   }
 
-  .faq-abschnitt {
-    --faq-linie: #D6CFC2;
-  }
 </style>

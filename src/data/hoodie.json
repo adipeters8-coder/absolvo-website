@@ -1,0 +1,30 @@
+{
+  "_info": "Produktdaten des Hoodies. Maße in cm, flach gemessen. Quelle: Größentabelle des Herstellers.",
+  "eckdaten": [
+    { "wert": "270 g/m²", "label": "Grammatur" },
+    { "wert": "S bis 5XL", "label": "Größen" },
+    { "wert": "37", "label": "Farben" }
+  ],
+  "farben_anzahl": 37,
+  "merkmale": [
+    "Schweres, einlaufvorbehandeltes Mischgewebe aus 50 % Baumwolle und 50 % Polyester",
+    "Air-Jet-Garn für weicheren Griff und reduziertes Pilling",
+    "Doppelt gefütterte Kapuze mit farblich passendem Kordelzug",
+    "Doppelnaht an Bund und Ärmeln für hohe Strapazierfähigkeit",
+    "1x1-Rippstrick mit Elasthan für Formbeständigkeit"
+  ],
+  "groessentabelle": [
+    { "groesse": "S", "laenge": 68.6, "breite": 50.8 },
+    { "groesse": "M", "laenge": 71.1, "breite": 55.9 },
+    { "groesse": "L", "laenge": 73.7, "breite": 61.0 },
+    { "groesse": "XL", "laenge": 76.2, "breite": 66.0 },
+    { "groesse": "2XL", "laenge": 78.7, "breite": 71.1 },
+    { "groesse": "3XL", "laenge": 81.3, "breite": 76.2 },
+    { "groesse": "4XL", "laenge": 83.8, "breite": 81.3 },
+    { "groesse": "5XL", "laenge": 86.4, "breite": 86.4 }
+  ],
+  "toleranzen": [
+    "Maßtoleranz: ±2,5 bis 3 cm in Länge und Breite.",
+    "Einlaufen: bis zu 5 % in Länge und Breite, nach internationalen Standards."
+  ]
+}

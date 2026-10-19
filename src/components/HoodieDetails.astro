@@ -1,0 +1,285 @@
+---
+// Abschnitt „Der Hoodie“: Eckdaten, Merkmale und die Größentabelle als Pop-up.
+// Das Pop-up läuft über die Popover-API des Browsers, ganz ohne JavaScript. Pro Seite nur einmal einbinden,
+// der Preisrechner verlinkt auf dieselbe Tabelle (id="groessentabelle").
+import SectionLabel from './SectionLabel.astro';
+import hoodie from '../data/hoodie.json';
+
+interface Props {
+  nummer?: string;
+  variante?: 'papier' | 'papier-2';
+}
+const { nummer, variante = 'papier' } = Astro.props;
+const cm = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 });
+---
+
+<section class={`abschnitt abschnitt--${variante} hoodie-abschnitt`} aria-labelledby="hoodie-titel">
+  <div class="container hoodie">
+    <div class="hoodie__kopf">
+      <SectionLabel nummer={nummer} text="Der Hoodie" />
+      <h2 id="hoodie-titel">Der Hoodie im Detail</h2>
+      <ul role="list" class="eckdaten">
+        {
+          hoodie.eckdaten.map((e) => (
+            <li class="eckdaten__kachel">
+              <span class="eckdaten__wert">{e.wert}</span>
+              <span class="eckdaten__label">{e.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <button type="button" class="pfeil-link groessen-knopf" popovertarget="groessentabelle">Größentabelle ansehen</button>
+    </div>
+
+    <ul role="list" class="merkmale">
+      {hoodie.merkmale.map((m) => <li>{m}</li>)}
+    </ul>
+  </div>
+
+  <div id="groessentabelle" class="tabelle-popover" popover role="dialog" aria-labelledby="groessentabelle-titel">
+    <div class="tabelle-popover__kopf">
+      <p class="tabelle-popover__titel" id="groessentabelle-titel">Größentabelle</p>
+      <button
+        type="button"
+        class="tabelle-popover__zu"
+        popovertarget="groessentabelle"
+        popovertargetaction="hide"
+        aria-label="Größentabelle schließen"
+      >
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <table class="groessen">
+      <thead>
+        <tr>
+          <th scope="col">Größe</th>
+          <th scope="col">Länge</th>
+          <th scope="col">Breite</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          hoodie.groessentabelle.map((g) => (
+            <tr>
+              <th scope="row">{g.groesse}</th>
+              <td>{cm.format(g.laenge)} cm</td>
+              <td>{cm.format(g.breite)} cm</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+    <div class="tabelle-popover__hinweis">
+      <p>Gemessen am flach liegenden Hoodie.</p>
+      {hoodie.toleranzen.map((t) => <p>{t}</p>)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hoodie {
+    display: grid;
+    gap: 40px;
+  }
+
+  .hoodie__kopf {
+    display: grid;
+    gap: 20px;
+    align-content: start;
+    justify-items: start;
+  }
+
+  .eckdaten {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .eckdaten__kachel {
+    display: grid;
+    gap: 6px;
+    padding: 18px 16px;
+    background: var(--papier-2);
+    border-radius: var(--radius-mittel);
+  }
+
+  :global(.abschnitt--papier-2) .eckdaten__kachel {
+    background: var(--papier);
+  }
+
+  .eckdaten__wert {
+    font-size: clamp(1.25rem, 0.9rem + 1.5vw, 2rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .eckdaten__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--tinte-2);
+  }
+
+  .groessen-knopf {
+    padding: 8px 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .merkmale {
+    display: grid;
+    align-content: start;
+    border-top: 1px solid var(--linie);
+  }
+
+  .merkmale li {
+    position: relative;
+    padding: 16px 0 16px 34px;
+    border-bottom: 1px solid var(--linie);
+    line-height: 1.4;
+  }
+
+  /* kleiner Haken in Rot, per CSS gezeichnet */
+  .merkmale li::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 19px;
+    width: 7px;
+    height: 13px;
+    border-right: 2.5px solid var(--rot-text);
+    border-bottom: 2.5px solid var(--rot-text);
+    transform: rotate(45deg);
+  }
+
+  @media (min-width: 960px) {
+    .hoodie {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: clamp(48px, 6vw, 88px);
+      align-items: start;
+    }
+
+    .merkmale {
+      margin-top: 4px;
+    }
+  }
+
+  /* ---------- Pop-up Größentabelle ---------- */
+  .tabelle-popover {
+    width: min(100% - 32px, 520px);
+    max-height: min(88vh, 720px);
+    margin: auto;
+    padding: clamp(20px, 4vw, 32px);
+    overflow: auto;
+    background: var(--papier);
+    color: var(--tinte);
+    border: 0;
+    border-radius: var(--radius);
+  }
+
+  .tabelle-popover::backdrop {
+    background: rgb(23 24 28 / 0.5);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+  .tabelle-popover__kopf {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  .tabelle-popover__titel {
+    font-size: var(--fs-h3);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .tabelle-popover__zu {
+    position: relative;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    background: var(--papier-2);
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .tabelle-popover__zu span::before,
+  .tabelle-popover__zu span::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2px;
+    margin: -1px 0 0 -8px;
+    background: var(--tinte);
+    border-radius: 2px;
+    transform: rotate(45deg);
+  }
+
+  .tabelle-popover__zu span::after {
+    transform: rotate(-45deg);
+  }
+
+  .tabelle-popover__zu:focus-visible {
+    outline: 3px solid var(--tinte);
+    outline-offset: 2px;
+  }
+
+  .groessen {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .groessen th,
+  .groessen td {
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--linie);
+    text-align: right;
+  }
+
+  .groessen th:first-child {
+    text-align: left;
+  }
+
+  .groessen thead th {
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--tinte-2);
+  }
+
+  .groessen tbody th {
+    font-weight: 800;
+  }
+
+  .groessen td {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .tabelle-popover__hinweis {
+    display: grid;
+    gap: 4px;
+    margin-top: 16px;
+    font-size: var(--fs-klein);
+    color: var(--tinte-2);
+  }
+</style>

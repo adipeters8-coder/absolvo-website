@@ -20,5 +20,11 @@
     "adresse": "hello@adrianpeters.com"
   },
   "einzelzahlung_umgesetzt": false,
+  "portal_live": false,
+  "zahlungsarten": [
+    "Rechnung",
+    "PayPal",
+    "Klarna"
+  ],
   "forminit_id": "chxcpquof2r"
 }
