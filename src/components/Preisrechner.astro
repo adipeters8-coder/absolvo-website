@@ -83,13 +83,9 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
     </div>
 
     <div class="feld">
-      <div class="feld__kopf">
-        <label class="feld__titel" for="uebergroessen">
-          Davon Übergrößen 3XL bis 5XL <span class="feld__preis">{plus(a.uebergroesse_3xl_bis_5xl)} pro Stück</span>
-        </label>
-        <!-- öffnet das Pop-up aus HoodieDetails (muss auf derselben Seite stehen) -->
-        <button type="button" class="feld__link" popovertarget="groessentabelle">Größentabelle</button>
-      </div>
+      <label class="feld__titel" for="uebergroessen">
+        Davon Übergrößen 3XL bis 5XL <span class="feld__preis">{plus(a.uebergroesse_3xl_bis_5xl)} pro Stück</span>
+      </label>
       <input
         class="eingabe eingabe--kurz"
         type="number"
@@ -101,6 +97,8 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
         value="0"
         inputmode="numeric"
       />
+      <!-- unter dem Feld, damit es nicht wie die Beschriftung des Felds wirkt; öffnet das Pop-up aus HoodieDetails -->
+      <button type="button" class="feld__link" popovertarget="groessentabelle">Größentabelle ansehen</button>
     </div>
 
     <fieldset class="feld">
@@ -625,16 +623,9 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
     transform: rotate(90deg);
   }
 
-  .feld__kopf {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0 16px;
-  }
-
   .feld__link {
-    margin-bottom: 12px;
+    display: block;
+    margin-top: 8px;
     padding: 4px 0;
     background: none;
     border: 0;
