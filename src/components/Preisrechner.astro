@@ -4,7 +4,6 @@ import Preistabelle from './Preistabelle.astro';
 import preise from '../data/preise.json';
 import farbwerte from '../data/farbwerte.json';
 import site from '../data/site.json';
-import hoodie from '../data/hoodie.json';
 import { cent, formatEuro } from '../lib/preis';
 import { shy } from '../lib/text';
 
@@ -23,6 +22,9 @@ const action = `https://forminit.com/f/${forminitId || 'FORMINIT_ID_FEHLT'}`;
 const a = preise.aufpreise_pro_stueck;
 const plus = (eur: number) => `+${formatEuro(cent(eur))}`;
 const farbwert = (name: string) => (farbwerte as Record<string, string>)[name] ?? '#B5B2AB';
+// Beliebte Farben stehen sichtbar oben, alle weiteren klappen unter „Weitere Farben“ auf
+const beliebt = (preise.farben_beliebt ?? preise.farben.slice(0, 6)).filter((f) => preise.farben.includes(f));
+const weitere = preise.farben.filter((f) => !beliebt.includes(f));
 const reglerMax = Math.max(150, Math.max(...preise.staffel_basis.map((s) => s.ab)) + 50);
 const startMenge = 30;
 
@@ -105,7 +107,7 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
       <legend class="feld__titel">Hoodie-Farbe</legend>
       <div class="farben">
         {
-          preise.farben.map((farbe, i) => (
+          beliebt.map((farbe, i) => (
             <label class="farbe">
               <input type="radio" name="fi-text-farbe" value={farbe} checked={i === 0} />
               <span class="farbe__kachel" style={`--farbe: ${farbwert(farbe)}`} aria-hidden="true" />
@@ -113,16 +115,27 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
             </label>
           ))
         }
-        <label class="farbe">
-          <input type="radio" name="fi-text-farbe" value="Andere Farbe (siehe Nachricht)" />
-          <span class="farbe__kachel farbe__kachel--andere" aria-hidden="true"></span>
-          <span class="farbe__name">Andere Farbe</span>
-        </label>
       </div>
-      <p class="feld__hilfe">
-        Das sind die beliebtesten Farben. Insgesamt gibt es {hoodie.farben_anzahl}, eure Wunschfarbe schreibt ihr einfach
-        unten in die Nachricht.
-      </p>
+      {
+        weitere.length > 0 && (
+          <details class="farben-mehr">
+            <summary class="farben-mehr__knopf">
+              <span class="farben-mehr__zu">Weitere Farben anzeigen ({weitere.length})</span>
+              <span class="farben-mehr__auf">Weniger Farben anzeigen</span>
+            </summary>
+            <div class="farben farben--weitere">
+              {weitere.map((farbe) => (
+                <label class="farbe">
+                  <input type="radio" name="fi-text-farbe" value={farbe} />
+                  <span class="farbe__kachel" style={`--farbe: ${farbwert(farbe)}`} aria-hidden="true" />
+                  <span class="farbe__name">{farbe}</span>
+                </label>
+              ))}
+            </div>
+          </details>
+        )
+      }
+      <p class="feld__hilfe">Farben können am Bildschirm leicht vom echten Stoff abweichen.</p>
     </fieldset>
 
     <fieldset class="feld">
@@ -599,28 +612,65 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
     transition: box-shadow 0.12s ease;
   }
 
-  /* „Andere Farbe“: gestrichelter Kreis mit Plus */
-  .farbe__kachel--andere {
-    position: relative;
+  /* „Weitere Farben“: klappt ohne JavaScript auf (details/summary) */
+  .farben-mehr {
+    margin-top: 16px;
+  }
+
+  .farben-mehr__knopf {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 10px 18px;
     background: var(--papier);
-    border-style: dashed;
+    border: 2px solid var(--grau);
+    border-radius: var(--radius-pille);
+    font-size: var(--fs-klein);
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
   }
 
-  .farbe__kachel--andere::before,
-  .farbe__kachel--andere::after {
+  .farben-mehr__knopf::-webkit-details-marker {
+    display: none;
+  }
+
+  .farben-mehr__knopf::after {
     content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 16px;
-    height: 2px;
-    margin: -1px 0 0 -8px;
-    background: var(--tinte);
-    border-radius: 2px;
+    width: 7px;
+    height: 7px;
+    margin-top: -4px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.15s ease;
   }
 
-  .farbe__kachel--andere::after {
-    transform: rotate(90deg);
+  .farben-mehr__knopf:hover {
+    border-color: var(--tinte);
+  }
+
+  .farben-mehr__knopf:focus-visible {
+    outline: 3px solid var(--tinte);
+    outline-offset: 3px;
+  }
+
+  .farben-mehr[open] .farben-mehr__knopf::after {
+    transform: translateY(4px) rotate(-135deg);
+  }
+
+  .farben-mehr__auf,
+  .farben-mehr[open] .farben-mehr__zu {
+    display: none;
+  }
+
+  .farben-mehr[open] .farben-mehr__auf {
+    display: inline;
+  }
+
+  .farben--weitere {
+    margin-top: 20px;
   }
 
   .feld__link {
@@ -642,9 +692,10 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
   }
 
   .farbe__name {
-    font-size: var(--fs-klein);
+    font-size: 0.8125rem;
     font-weight: 500;
     line-height: 1.2;
+    overflow-wrap: anywhere;
   }
 
   .farbe:hover .farbe__kachel {

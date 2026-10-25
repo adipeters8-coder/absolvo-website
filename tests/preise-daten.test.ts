@@ -5,6 +5,9 @@ import { readFileSync } from 'node:fs';
 import { berechne, cent, type Preise } from '../src/lib/preis.ts';
 
 const preise: Preise = JSON.parse(readFileSync(new URL('../src/data/preise.json', import.meta.url), 'utf8'));
+const farbwerte: Record<string, string> = JSON.parse(
+  readFileSync(new URL('../src/data/farbwerte.json', import.meta.url), 'utf8'),
+);
 const stufen = preise.staffel_basis;
 
 test('erste Stufe beginnt bei der Mindestmenge', () => {
@@ -30,4 +33,10 @@ test('Rabattcodes sind positiv und gelten ab Mindestmenge oder später', () => {
     assert.ok(regel.rabatt_eur > 0, code);
     assert.ok(regel.ab_menge >= preise.mindestmenge, code);
   }
+});
+
+test('jede Farbe hat einen Farbwert, beliebte Farben gibt es wirklich', () => {
+  assert.equal(new Set(preise.farben).size, preise.farben.length, 'doppelte Farbe');
+  for (const farbe of preise.farben) assert.match(farbwerte[farbe] ?? '', /^#[0-9A-F]{6}$/i, `kein Farbwert für ${farbe}`);
+  for (const farbe of preise.farben_beliebt ?? []) assert.ok(preise.farben.includes(farbe), `${farbe} fehlt in farben`);
 });

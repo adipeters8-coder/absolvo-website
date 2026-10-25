@@ -4,6 +4,7 @@
 // der Preisrechner verlinkt auf dieselbe Tabelle (id="groessentabelle").
 import SectionLabel from './SectionLabel.astro';
 import hoodie from '../data/hoodie.json';
+import preise from '../data/preise.json';
 
 interface Props {
   nummer?: string;
@@ -11,6 +12,8 @@ interface Props {
 }
 const { nummer, variante = 'papier' } = Astro.props;
 const cm = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 });
+// „auto“ = Anzahl der Farben aus preise.json, damit Rechner und Eckdaten nie auseinanderlaufen
+const eckdaten = hoodie.eckdaten.map((e) => ({ ...e, wert: e.wert === 'auto' ? String(preise.farben.length) : e.wert }));
 ---
 
 <section class={`abschnitt abschnitt--${variante} hoodie-abschnitt`} aria-labelledby="hoodie-titel">
@@ -20,7 +23,7 @@ const cm = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 });
       <h2 id="hoodie-titel">Der Hoodie im Detail</h2>
       <ul role="list" class="eckdaten">
         {
-          hoodie.eckdaten.map((e) => (
+          eckdaten.map((e) => (
             <li class="eckdaten__kachel">
               <span class="eckdaten__wert">{e.wert}</span>
               <span class="eckdaten__label">{e.label}</span>

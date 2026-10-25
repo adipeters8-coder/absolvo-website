@@ -13,6 +13,8 @@ export interface Preise {
     uebergroesse_3xl_bis_5xl: number;
   };
   farben: string[];
+  /** Farben, die im Rechner sichtbar oben stehen; der Rest klappt auf */
+  farben_beliebt?: string[];
   codes: Record<string, { rabatt_eur: number; ab_menge: number }>;
   hinweis: string;
 }
