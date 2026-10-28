@@ -62,5 +62,6 @@
   ],
   "farben_beliebt": ["Black", "Navy", "Sport Grey (Heather)", "White", "Maroon", "Forest Green"],
   "codes": {},
+  "eroeffnungsangebot": { "aktiv": true, "aufschlag_prozent": 10 },
   "hinweis": "Alle Preise inklusive Mehrwertsteuer. Den endgültigen Preis bekommt ihr, nachdem ich eure Anfrage angeschaut habe."
 }

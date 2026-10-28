@@ -17,6 +17,8 @@ export interface Preise {
   /** Farben, die im Rechner sichtbar oben stehen; der Rest klappt auf */
   farben_beliebt?: string[];
   codes: Record<string, { rabatt_eur: number; ab_menge: number }>;
+  /** Eröffnungsangebot: Streichpreis = Preis + aufschlag_prozent, gültig bis Ende der laufenden Woche */
+  eroeffnungsangebot?: { aktiv: boolean; aufschlag_prozent: number };
   hinweis: string;
 }
 
@@ -163,4 +165,19 @@ export function berechne(preise: Preise, eingabe: Auswahl): Ergebnis {
     code,
     naechsteStufe,
   };
+}
+
+/** Streichpreis fürs Eröffnungsangebot, null wenn das Angebot aus ist */
+export function streichpreisCent(preise: Preise, betragCent: number): number | null {
+  const angebot = preise.eroeffnungsangebot;
+  if (!angebot?.aktiv) return null;
+  return Math.round(betragCent * (1 + angebot.aufschlag_prozent / 100));
+}
+
+/** Ende der laufenden Woche: Sonntag 23:59:59 Ortszeit */
+export function wochenende(jetzt: Date): Date {
+  const ende = new Date(jetzt);
+  ende.setDate(jetzt.getDate() + ((7 - jetzt.getDay()) % 7));
+  ende.setHours(23, 59, 59, 999);
+  return ende;
 }

@@ -195,12 +195,29 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
 
       <div class="ergebnis__live" data-live hidden>
         <div data-preisblock>
+          {
+            preise.eroeffnungsangebot?.aktiv && (
+              <div class="angebot" data-angebot>
+                <p class="angebot__titel"><span class="angebot__punkt" aria-hidden="true" />Eröffnungsangebot</p>
+                <p class="angebot__frist">
+                  Nur noch gültig bis Ende der Woche: <span class="angebot__uhr" role="timer" data-countdown>–</span>
+                </p>
+              </div>
+            )
+          }
+          <p class="ergebnis__streich" data-zeile-streich hidden>
+            <span class="visually-hidden">Statt </span><s data-ausgabe="streich">–</s>
+          </p>
           <p class="ergebnis__preis" data-ausgabe="pro-hoodie">–</p>
           <p class="ergebnis__einheit">pro Hoodie</p>
           <dl class="ergebnis__zeilen">
             <div>
               <dt>Gesamtpreis</dt>
               <dd data-ausgabe="gesamt">–</dd>
+            </div>
+            <div data-zeile-angebot hidden>
+              <dt>Ihr spart mit dem Eröffnungsangebot</dt>
+              <dd class="ergebnis__ersparnis" data-ausgabe="angebot-ersparnis">–</dd>
             </div>
             <div data-zeile-ersparnis hidden>
               <dt>Ersparnis durch Code</dt>
@@ -273,6 +290,7 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
     <input type="hidden" name="fi-text-gesamtpreis" value="ohne JavaScript nicht berechnet" data-feld="gesamt" />
     <input type="hidden" name="fi-text-staffelpreis_pro_stueck" value="ohne JavaScript nicht berechnet" data-feld="staffel" />
     <input type="hidden" name="fi-text-ersparnis_code" value="0" data-feld="ersparnis" />
+    <input type="hidden" name="fi-text-eroeffnungsangebot" value="–" data-feld="angebot" />
 
     <div class="absenden">
       <button class="btn" type="submit" data-absenden>Unverbindlich anfragen</button>
@@ -286,7 +304,10 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
 
   <div class="preisleiste ist-weg" data-preisleiste hidden>
     <div class="preisleiste__text">
-      <p data-leiste-preis><strong data-ausgabe="pro-hoodie">–</strong> pro Hoodie</p>
+      <p data-leiste-preis>
+        <s class="preisleiste__streich" data-leiste-streich hidden><span class="visually-hidden">Statt </span><span data-ausgabe="streich">–</span></s>
+        <strong data-ausgabe="pro-hoodie">–</strong> pro Hoodie
+      </p>
       <p class="preisleiste__gesamt" data-leiste-gesamt><span data-ausgabe="gesamt">–</span> gesamt</p>
       <p class="preisleiste__mindest" data-leiste-mindest hidden>Ab {preise.mindestmenge} Hoodies geht's los.</p>
     </div>
@@ -1048,6 +1069,87 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
     border-left: 4px solid var(--rot);
     border-radius: var(--radius-feld);
     font-weight: 600;
+  }
+
+  /* ---------- Eröffnungsangebot ---------- */
+  .angebot {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    background: var(--tinte-2);
+    border-radius: var(--radius-feld);
+  }
+
+  .angebot__titel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--rot-auf-tinte);
+  }
+
+  .angebot__punkt {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    background: var(--rot-auf-tinte);
+    border-radius: 50%;
+    animation: angebot-blinken 1.6s ease-in-out infinite;
+  }
+
+  @keyframes angebot-blinken {
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 0 0 rgb(255 90 95 / 0.55);
+    }
+
+    50% {
+      opacity: 0.35;
+      box-shadow: 0 0 0 6px rgb(255 90 95 / 0);
+    }
+  }
+
+  .angebot__frist {
+    font-size: var(--fs-klein);
+    font-weight: 600;
+  }
+
+  .angebot__uhr {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .ergebnis__streich {
+    margin-bottom: 6px;
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    color: var(--papier-gedimmt);
+  }
+
+  .ergebnis__streich s,
+  .preisleiste__streich {
+    text-decoration-color: var(--rot-auf-tinte);
+    text-decoration-thickness: 2px;
+  }
+
+  .preisleiste__streich {
+    margin-right: 4px;
+    font-family: var(--font-mono);
+    color: var(--papier-gedimmt);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .angebot__punkt {
+      animation: none;
+    }
   }
 
   /* ---------- Mobile Preisleiste ---------- */

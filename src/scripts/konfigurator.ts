@@ -1,7 +1,7 @@
 // Preisrechner: Live-Preis, Rabattcode-Prüfung, Datei-Prüfung und Absenden an Forminit.
 // Ohne JavaScript bleibt das Formular ein normales POST-Formular.
 import preiseJson from '../data/preise.json';
-import { berechne, formatEuro, istCodeAnfang, staffelStufe, type Auswahl, type Ergebnis, type Preise } from '../lib/preis';
+import { berechne, formatEuro, istCodeAnfang, staffelStufe, streichpreisCent, wochenende, type Auswahl, type Ergebnis, type Preise } from '../lib/preis';
 
 const preise = preiseJson as Preise;
 
@@ -47,6 +47,10 @@ function start() {
   const mindest = $<HTMLElement>('[data-mindest]');
   const anreiz = $<HTMLElement>('[data-anreiz]');
   const zeileErsparnis = $<HTMLElement>('[data-zeile-ersparnis]');
+  const zeileStreich = $<HTMLElement>('[data-zeile-streich]');
+  const zeileAngebot = $<HTMLElement>('[data-zeile-angebot]');
+  const leisteStreich = $<HTMLElement>('[data-leiste-streich]');
+  const countdown = form.querySelector<HTMLElement>('[data-countdown]');
   const ansage = $<HTMLElement>('[data-ansage]');
   const leiste = $<HTMLElement>('[data-preisleiste]');
   const leistePreis = $<HTMLElement>('[data-leiste-preis]');
@@ -221,6 +225,10 @@ function start() {
       zaehlen('pro-hoodie', null);
       zaehlen('gesamt', null);
       zeileErsparnis.hidden = true;
+      zeileStreich.hidden = true;
+      zeileAngebot.hidden = true;
+      leisteStreich.hidden = true;
+      feld('angebot', '–');
       feld('pro-hoodie', `unter Mindestmenge (${preise.mindestmenge})`);
       feld('gesamt', `unter Mindestmenge (${preise.mindestmenge})`);
       feld('staffel', '–');
@@ -235,6 +243,19 @@ function start() {
     zaehlen('gesamt', e.gesamtCent);
     zeileErsparnis.hidden = e.rabattCent === 0;
     ausgeben('ersparnis', `−${formatEuro(e.rabattCent)}`);
+
+    // Eröffnungsangebot: Streichpreis liegt pauschal über dem echten Preis
+    const streichProHoodie = streichpreisCent(preise, e.proHoodieCent);
+    const streichGesamt = streichpreisCent(preise, e.gesamtCent);
+    const mitAngebot = streichProHoodie !== null && streichGesamt !== null;
+    zeileStreich.hidden = !mitAngebot;
+    zeileAngebot.hidden = !mitAngebot;
+    leisteStreich.hidden = !mitAngebot;
+    if (mitAngebot) {
+      ausgeben('streich', formatEuro(streichProHoodie));
+      ausgeben('angebot-ersparnis', `−${formatEuro(streichGesamt - e.gesamtCent)}`);
+      feld('angebot', `ja, Streichpreis ${formatEuro(streichProHoodie)} pro Hoodie, ${formatEuro(streichGesamt)} gesamt`);
+    }
 
     feld('pro-hoodie', proHoodie);
     feld('gesamt', gesamt);
@@ -347,6 +368,20 @@ function start() {
     absenden.disabled = false;
     absenden.textContent = knopfText;
   });
+
+  // Countdown bis Sonntag 23:59, danach beginnt die nächste Woche
+  if (countdown) {
+    const zwei = (n: number) => String(n).padStart(2, '0');
+    const ticken = () => {
+      const rest = Math.max(0, wochenende(new Date()).getTime() - Date.now());
+      const s = Math.floor(rest / 1000);
+      const tage = Math.floor(s / 86400);
+      const uhr = `${zwei(Math.floor((s % 86400) / 3600))}:${zwei(Math.floor((s % 3600) / 60))}:${zwei(s % 60)}`;
+      countdown.textContent = tage > 0 ? `${tage} ${tage === 1 ? 'Tag' : 'Tage'}, ${uhr}` : uhr;
+    };
+    ticken();
+    window.setInterval(ticken, 1000);
+  }
 
   aktualisieren();
 }

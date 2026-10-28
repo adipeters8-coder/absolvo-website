@@ -68,36 +68,11 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
 
   <TrustLeiste />
 
-  <!-- 01 · Für wen -->
-  <section class="abschnitt abschnitt--papier" aria-labelledby="fuer-wen-titel">
-    <div class="container">
-      <div class="abschnitt__kopf">
-        <SectionLabel nummer="01" text="Für wen" />
-        <h2 id="fuer-wen-titel">Für <Rotstift typ="unterstreichung">wen</Rotstift> ist ABSOLVO?</h2>
-      </div>
-      <SchoolCards />
-    </div>
-  </section>
-
-  <!-- 02 · So läuft's -->
-  <section class="abschnitt abschnitt--tinte" aria-labelledby="ablauf-titel">
-    <div class="container">
-      <div class="abschnitt__kopf abschnitt__kopf--link">
-        <div class="abschnitt__kopf-text">
-          <SectionLabel nummer="02" text="So läuft's" />
-          <h2 id="ablauf-titel">{shy('So kommt ihr an euren Abschlusspullover')}</h2>
-        </div>
-        <a class="pfeil-link" href="/so-laeufts/">Mehr zum Ablauf</a>
-      </div>
-      <StepList schritte={schritte} />
-    </div>
-  </section>
-
-  <!-- 03 · Preisrechner direkt auf der Startseite -->
+  <!-- 01 · Preisrechner direkt unter dem Hero -->
   <section class="abschnitt abschnitt--papier-2 rechner-start" id="preisrechner" aria-labelledby="rechner-titel">
     <div class="container">
       <div class="abschnitt__kopf">
-        <SectionLabel nummer="03" text="Preisrechner" />
+        <SectionLabel nummer="01" text="Preisrechner" />
         <h2 id="rechner-titel">{shy('Was kostet euer Abschlusspullover?')}</h2>
         <p class="abschnitt__intro">
           Gebt ein, was ihr euch vorstellt. Der Preis passt sich sofort an. Danach schickt ihr die Anfrage unverbindlich ab und ich
@@ -105,6 +80,31 @@ const guenstigste = [...preise.staffel_basis].sort((a, b) => a.preis - b.preis)[
         </p>
       </div>
       <Preisrechner kontaktEbene="h3" />
+    </div>
+  </section>
+
+  <!-- 02 · Für wen -->
+  <section class="abschnitt abschnitt--papier" aria-labelledby="fuer-wen-titel">
+    <div class="container">
+      <div class="abschnitt__kopf">
+        <SectionLabel nummer="02" text="Für wen" />
+        <h2 id="fuer-wen-titel">Für <Rotstift typ="unterstreichung">wen</Rotstift> ist ABSOLVO?</h2>
+      </div>
+      <SchoolCards />
+    </div>
+  </section>
+
+  <!-- 03 · So läuft's -->
+  <section class="abschnitt abschnitt--tinte" aria-labelledby="ablauf-titel">
+    <div class="container">
+      <div class="abschnitt__kopf abschnitt__kopf--link">
+        <div class="abschnitt__kopf-text">
+          <SectionLabel nummer="03" text="So läuft's" />
+          <h2 id="ablauf-titel">{shy('So kommt ihr an euren Abschlusspullover')}</h2>
+        </div>
+        <a class="pfeil-link" href="/so-laeufts/">Mehr zum Ablauf</a>
+      </div>
+      <StepList schritte={schritte} />
     </div>
   </section>
 
