@@ -6,9 +6,10 @@ export interface Preise {
   staffel_basis: { ab: number; preis: number }[];
   basis_enthaelt: string;
   aufpreise_pro_stueck: {
-    druck_vorne_2_farben: number;
-    druck_vorne_3_farben: number;
-    ruecken_2_farben: number;
+    /** optional: bei DTF-Druck entfallen Farbaufpreise */
+    druck_vorne_2_farben?: number;
+    druck_vorne_3_farben?: number;
+    ruecken_2_farben?: number;
     aermelname: number;
     uebergroesse_3xl_bis_5xl: number;
   };
@@ -82,9 +83,9 @@ export function naechsteStaffelStufe(preise: Preise, menge: number) {
 export function aufpreisProStueckCent(preise: Preise, auswahl: Pick<Auswahl, 'druckVorne' | 'ruecken' | 'aermelname'>): number {
   const a = preise.aufpreise_pro_stueck;
   let summe = 0;
-  if (auswahl.druckVorne === 2) summe += cent(a.druck_vorne_2_farben);
-  if (auswahl.druckVorne >= 3) summe += cent(a.druck_vorne_3_farben);
-  if (auswahl.ruecken >= 2) summe += cent(a.ruecken_2_farben);
+  if (auswahl.druckVorne === 2) summe += cent(a.druck_vorne_2_farben ?? 0);
+  if (auswahl.druckVorne >= 3) summe += cent(a.druck_vorne_3_farben ?? 0);
+  if (auswahl.ruecken >= 2) summe += cent(a.ruecken_2_farben ?? 0);
   if (auswahl.aermelname) summe += cent(a.aermelname);
   return summe;
 }

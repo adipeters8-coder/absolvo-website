@@ -38,8 +38,9 @@ function start() {
   const anzahl = $<HTMLInputElement>('#anzahl');
   const regler = $<HTMLInputElement>('[data-regler]');
   const uebergroessen = $<HTMLInputElement>('#uebergroessen');
-  const code = $<HTMLInputElement>('#rabattcode');
-  const codeStatus = $<HTMLElement>('[data-code-status]');
+  // Rabattcode-Feld gibt es nur, wenn preise.json Codes enthält
+  const code = form.querySelector<HTMLInputElement>('#rabattcode');
+  const codeStatus = form.querySelector<HTMLElement>('[data-code-status]');
   const live = $<HTMLElement>('[data-live]');
   const statisch = $<HTMLElement>('[data-statisch]');
   const preisblock = $<HTMLElement>('[data-preisblock]');
@@ -160,10 +161,11 @@ function start() {
   const lesen = (): Auswahl => ({
     menge: Number.parseInt(anzahl.value, 10) || 0,
     uebergroessen: Number.parseInt(uebergroessen.value, 10) || 0,
-    druckVorne: Number(gewaehlt('fi-text-druck_vorne').dataset.farben),
-    ruecken: Number(gewaehlt('fi-text-ruecken').dataset.farben),
+    // DTF-Druck: Farbanzahl vorne und hinten kostet nichts extra
+    druckVorne: 1,
+    ruecken: 1,
     aermelname: gewaehlt('fi-text-aermelname').value === 'Ja',
-    code: code.value,
+    code: code?.value ?? '',
   });
 
   let ansageTimer: number | undefined;
@@ -173,6 +175,7 @@ function start() {
   };
 
   const zeigeCodeStatus = (e: Ergebnis) => {
+    if (!code || !codeStatus) return;
     const c = e.code;
     let text = '';
     if (c.status === 'gueltig') text = `Code passt, ${formatEuroGanz(c.rabattCent)} gespart`;

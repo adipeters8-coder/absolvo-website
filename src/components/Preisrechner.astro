@@ -27,16 +27,8 @@ const beliebt = (preise.farben_beliebt ?? preise.farben.slice(0, 6)).filter((f) 
 const weitere = preise.farben.filter((f) => !beliebt.includes(f));
 const reglerMax = Math.max(150, Math.max(...preise.staffel_basis.map((s) => s.ab)) + 50);
 const startMenge = 30;
+const hatCodes = Object.keys(preise.codes ?? {}).length > 0;
 
-const druckVorne = [
-  { wert: '1 Farbe', farben: 1, aufpreis: null },
-  { wert: '2 Farben', farben: 2, aufpreis: plus(a.druck_vorne_2_farben) },
-  { wert: '3 Farben oder mehr', farben: 3, aufpreis: plus(a.druck_vorne_3_farben) },
-];
-const ruecken = [
-  { wert: 'Namensliste 1-farbig', farben: 1, aufpreis: null },
-  { wert: 'Namensliste 2-farbig', farben: 2, aufpreis: plus(a.ruecken_2_farben) },
-];
 const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfrage Abschlusspullover')}`;
 ---
 
@@ -138,39 +130,6 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
       <p class="feld__hilfe">Farben können am Bildschirm leicht vom echten Stoff abweichen.</p>
     </fieldset>
 
-    <fieldset class="feld">
-      <legend class="feld__titel">Druck vorne</legend>
-      <div class="optionen">
-        {
-          druckVorne.map((o, i) => (
-            <label class="option">
-              <input type="radio" name="fi-text-druck_vorne" value={o.wert} data-farben={o.farben} checked={i === 0} />
-              <span class="option__text">
-                {o.wert}
-                {o.aufpreis && <span class="option__preis">{o.aufpreis}</span>}
-              </span>
-            </label>
-          ))
-        }
-      </div>
-    </fieldset>
-
-    <fieldset class="feld">
-      <legend class="feld__titel">Rücken</legend>
-      <div class="optionen">
-        {
-          ruecken.map((o, i) => (
-            <label class="option">
-              <input type="radio" name="fi-text-ruecken" value={o.wert} data-farben={o.farben} checked={i === 0} />
-              <span class="option__text">
-                {o.wert}
-                {o.aufpreis && <span class="option__preis">{o.aufpreis}</span>}
-              </span>
-            </label>
-          ))
-        }
-      </div>
-    </fieldset>
 
     <fieldset class="feld">
       <legend class="feld__titel">Name auf dem Ärmel</legend>
@@ -208,6 +167,9 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
     </div>
 
 
+    {
+      // Rabattcode-Feld nur, wenn es in preise.json Codes gibt
+      hatCodes && (
     <div class="feld">
       <label class="feld__titel" for="rabattcode">Rabattcode <span class="feld__optional">(optional)</span></label>
       <input
@@ -222,6 +184,8 @@ const mailHref = `mailto:${site.mail.adresse}?subject=${encodeURIComponent('Anfr
       />
       <p class="code-status" id="code-status" aria-live="polite" data-code-status></p>
     </div>
+      )
+    }
 
   </div>
 

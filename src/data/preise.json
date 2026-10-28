@@ -1,28 +1,23 @@
 {
   "mindestmenge": 20,
   "staffel_basis": [
-    { "ab": 20, "preis": 39.90 },
-    { "ab": 22, "preis": 39.40 },
-    { "ab": 24, "preis": 38.90 },
-    { "ab": 26, "preis": 38.40 },
-    { "ab": 28, "preis": 37.90 },
-    { "ab": 30, "preis": 37.40 },
-    { "ab": 35, "preis": 36.90 },
-    { "ab": 40, "preis": 36.40 },
-    { "ab": 45, "preis": 35.90 },
-    { "ab": 50, "preis": 35.40 },
-    { "ab": 60, "preis": 34.90 },
-    { "ab": 70, "preis": 34.40 },
-    { "ab": 80, "preis": 33.90 },
-    { "ab": 90, "preis": 33.40 },
-    { "ab": 100, "preis": 32.90 }
+    { "ab": 20, "preis": 34.90 },
+    { "ab": 30, "preis": 32.90 },
+    { "ab": 50, "preis": 29.99 },
+    { "ab": 60, "preis": 29.59 },
+    { "ab": 70, "preis": 29.39 },
+    { "ab": 80, "preis": 29.19 },
+    { "ab": 90, "preis": 28.89 },
+    { "ab": 100, "preis": 28.69 },
+    { "ab": 110, "preis": 28.49 },
+    { "ab": 120, "preis": 28.29 },
+    { "ab": 130, "preis": 28.09 },
+    { "ab": 140, "preis": 27.99 },
+    { "ab": 150, "preis": 27.89 }
   ],
-  "basis_enthaelt": "Hoodie, Druck vorne 1-farbig, Rücken mit Namensliste 1-farbig, Design, Versand",
+  "basis_enthaelt": "Hoodie, Druck vorne (DTF, alle Farben), Rücken mit Namensliste, Design, Versand",
   "aufpreise_pro_stueck": {
-    "druck_vorne_2_farben": 1.50,
-    "druck_vorne_3_farben": 3.00,
-    "ruecken_2_farben": 1.50,
-    "aermelname": 5.00,
+    "aermelname": 8.90,
     "uebergroesse_3xl_bis_5xl": 6.00
   },
   "farben": [
@@ -66,9 +61,6 @@
     "White"
   ],
   "farben_beliebt": ["Black", "Navy", "Sport Grey (Heather)", "White", "Maroon", "Forest Green"],
-  "codes": {
-    "INSTA50": { "rabatt_eur": 50, "ab_menge": 40 },
-    "FLYER50": { "rabatt_eur": 50, "ab_menge": 40 }
-  },
+  "codes": {},
   "hinweis": "Alle Preise inklusive Mehrwertsteuer. Den endgültigen Preis bekommt ihr, nachdem ich eure Anfrage angeschaut habe."
 }
